@@ -1,0 +1,81 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+SineWaveOverTime
+</name>
+</assembly>
+<members>
+<member name="M:SineWaveOverTime.Circle.#ctor(System.Drawing.Point,System.Double)">
+	<summary>
+ Make a new Circle object with origin and radius
+ </summary>
+	<param name="position">The center point of the circle</param>
+	<param name="radius">The size of the circle (remember:- it's half of the diameter)</param>
+	<remarks></remarks>
+</member><member name="P:SineWaveOverTime.Circle.circumference">
+	<summary>
+ Get the circumference of the circle
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:SineWaveOverTime.Circle.area">
+	<summary>
+ Get the area of the circle
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:SineWaveOverTime.Circle.diameter">
+	<summary>
+ Get of set the diameter of the circle
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:SineWaveOverTime.Circle.getPath">
+	<summary>
+ Return a circle path from the current circle object
+ </summary>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:SineWaveOverTime.Circle.getPoint(System.Double,System.Double,System.Drawing.Point)">
+	<summary>
+ Returns the position (point) of which the point should be determined by the radius, radians (not degrees, you must convert) and the origin.
+ </summary>
+	<param name="radius"></param>
+	<param name="radians"></param>
+	<param name="origin"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:SineWaveOverTime.Circle.getRadians(System.Double)">
+	<summary>
+ Converts degrees to radians.
+ </summary>
+	<param name="degrees"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:SineWaveOverTime.Circle.getDegrees(System.Double)">
+	<summary>
+ Converts radians to degrees
+ </summary>
+	<param name="radians"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:SineWaveOverTime.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:SineWaveOverTime.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:SineWaveOverTime.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+</members>
+</doc>

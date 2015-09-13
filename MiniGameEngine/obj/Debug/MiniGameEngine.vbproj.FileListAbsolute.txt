@@ -1,0 +1,9 @@
+C:\Users\Matthew\Google Drive\SineWaveOverTime\MiniGameEngine\obj\Debug\MiniGameEngine.Game.resources
+C:\Users\Matthew\Google Drive\SineWaveOverTime\MiniGameEngine\obj\Debug\MiniGameEngine.Resources.resources
+C:\Users\Matthew\Google Drive\SineWaveOverTime\MiniGameEngine\obj\Debug\MiniGameEngine.vbproj.GenerateResource.Cache
+C:\Users\Matthew\Google Drive\SineWaveOverTime\MiniGameEngine\bin\Debug\MiniGameEngine.dll
+C:\Users\Matthew\Google Drive\SineWaveOverTime\MiniGameEngine\bin\Debug\MiniGameEngine.pdb
+C:\Users\Matthew\Google Drive\SineWaveOverTime\MiniGameEngine\bin\Debug\MiniGameEngine.xml
+C:\Users\Matthew\Google Drive\SineWaveOverTime\MiniGameEngine\obj\Debug\MiniGameEngine.dll
+C:\Users\Matthew\Google Drive\SineWaveOverTime\MiniGameEngine\obj\Debug\MiniGameEngine.xml
+C:\Users\Matthew\Google Drive\SineWaveOverTime\MiniGameEngine\obj\Debug\MiniGameEngine.pdb
