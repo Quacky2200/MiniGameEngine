@@ -6,104 +6,106 @@ MiniGameEngine
 </name>
 </assembly>
 <members>
-<member name="T:MiniGameEngine.RGBHSL.HSL">
+<member name="P:MiniGameEngine.GameContainer.AutomaticallyPause">
 	<summary>
- Thanks to https://web.archive.org/web/20110425154034/http://bobpowell.net/RGBHSB.htm for their work.
- Changed the namespace from Namespace xRay.Toolkit.Utilities to nothing for convenience.
+ Automatically pauses the game once the focus is lost and will resume it when it regains focus
  </summary>
+	<value></value>
+	<returns></returns>
 	<remarks></remarks>
-</member><member name="P:MiniGameEngine.My.Resources.Resources.ResourceManager">
-	<summary>
-  Returns the cached ResourceManager instance used by this class.
-</summary>
-</member><member name="P:MiniGameEngine.My.Resources.Resources.Culture">
-	<summary>
-  Overrides the current thread's CurrentUICulture property for all
-  resource lookups using this strongly typed resource class.
-</summary>
-</member><member name="T:MiniGameEngine.My.Resources.Resources">
-	<summary>
-  A strongly-typed resource class, for looking up localized strings, etc.
-</summary>
-</member><member name="M:MiniGameEngine.Game.GraphicsMainThread">
+</member><member name="M:MiniGameEngine.GameContainer.GraphicsMainThread">
 	<summary>
  Force the screen to refresh
  </summary>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Game.GameMainThread">
+</member><member name="M:MiniGameEngine.GameContainer.GameMainThread">
 	<summary>
  Force the game update
  </summary>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Game.Me_Shown(System.Object,System.EventArgs)">
+</member><member name="M:MiniGameEngine.GameContainer.Me_Shown(System.Object,System.EventArgs)">
 	<summary>
  Start the game when the window loads
  </summary>
 	<param name="sender"></param>
 	<param name="e"></param>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Game.Me_Paint(System.Object,System.Windows.Forms.PaintEventArgs)">
+</member><member name="M:MiniGameEngine.GameContainer.Me_Paint(System.Object,System.Windows.Forms.PaintEventArgs)">
 	<summary>
  Paint the screen (render the current scene)
  </summary>
 	<param name="sender"></param>
 	<param name="e"></param>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Game.Me_Closing(System.Object,System.Windows.Forms.FormClosingEventArgs)">
+</member><member name="M:MiniGameEngine.GameContainer.Me_Closing(System.Object,System.Windows.Forms.FormClosingEventArgs)">
 	<summary>
  When we close, stop everything gracefully
  </summary>
 	<param name="sender">Me - the game object</param>
 	<param name="e">The event arguments - form closing</param>
 	<remarks>We can use e.closing = false to prevent the window from closing</remarks>
-</member><member name="M:MiniGameEngine.Game.addScene(MiniGameEngine.Scene)">
+</member><member name="P:MiniGameEngine.GameContainer.Clip">
+	<summary>
+ Clip the cursor to the screen?
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:MiniGameEngine.GameContainer.cursorPosition">
+	<summary>
+ Return or set the cursor position
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.GameContainer.add(MiniGameEngine.Scene)">
 	<summary>
  Add a scene to the list
  </summary>
 	<param name="Scene"></param>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Game.addScenes(MiniGameEngine.Scene[])">
+</member><member name="M:MiniGameEngine.GameContainer.add(MiniGameEngine.Scene[])">
 	<summary>
  Add a list of scenes to the list
  </summary>
 	<param name="Scenes"></param>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Game.switchScenes(MiniGameEngine.Scene)">
+</member><member name="M:MiniGameEngine.GameContainer.switchScenes(MiniGameEngine.Scene)">
 	<summary>
  Switch the scene you want
  </summary>
 	<param name="Scene"></param>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Game.switchScenes(System.Int32)">
+</member><member name="M:MiniGameEngine.GameContainer.switchScenes(System.Int32)">
 	<summary>
  Switch to a scene from the list
  </summary>
 	<param name="index">The index of the scene (you want to swap to)</param>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Game.switchScenes``1">
+</member><member name="M:MiniGameEngine.GameContainer.switchScenes``1">
 	<summary>
  Switch to a scene using a class type
  </summary>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Game.removeScene(MiniGameEngine.Scene)">
+</member><member name="M:MiniGameEngine.GameContainer.removeScene(MiniGameEngine.Scene)">
 	<summary>
  Remove a scene from the list
  </summary>
 	<param name="Scene">The scene you want to remove</param>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Game.removeScene(System.Int32)">
+</member><member name="M:MiniGameEngine.GameContainer.removeScene(System.Int32)">
 	<summary>
  Remove a scene from the list
  </summary>
 	<param name="index">The index of the scene in the list (you want to remove)</param>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Game.getTime">
+</member><member name="M:MiniGameEngine.GameContainer.getTime">
 	<summary>
  Get the time in milliseconds
  </summary>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Game.getDelta">
+</member><member name="M:MiniGameEngine.GameContainer.getDelta">
 	<summary>
  Get the number of milliseconds that have past since the last frame
  </summary>
@@ -129,8 +131,14 @@ MiniGameEngine
 </member><member name="M:MiniGameEngine.Scene.Enter(MiniGameEngine.Scene)">
 	<summary>
  What happens when the scene appears on the screen
+ NOTE: Transitions will not run unless MyBase.Enter(lastScene) is used to set the scene active.
  </summary>
 	<param name="lastScene">The previous scene shown before this one</param>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Scene.onPause">
+	<summary>
+ What happens when the game pauses (pausing occurs when the window loses focus)
+ </summary>
 	<remarks></remarks>
 </member><member name="M:MiniGameEngine.Scene.Leave(MiniGameEngine.Scene)">
 	<summary>
@@ -148,7 +156,13 @@ MiniGameEngine
  A Scene class that must be inherited and use these functions when inherited. (See below)
  </summary>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.RandomColor.#ctor(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+</member><member name="M:MiniGameEngine.General.Color.SimilarColor.#ctor(System.Drawing.Color,System.Double)">
+	<summary>
+ Make a random color based on the color provided and the depth involved
+ </summary>
+	<param name="similarColor">The color to be based of</param>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.General.Color.RandomColor.#ctor(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
 	<summary>
  Make a RandomColor object using minimum and maximum values. 
  </summary>
@@ -159,55 +173,132 @@ MiniGameEngine
 	<param name="minB">The minimum the B component will be</param>
 	<param name="maxB">The maximum the B component will be</param>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.SimilarColor.#ctor(System.Drawing.Color,System.Double)">
+</member><member name="T:MiniGameEngine.General.Color.RGBHSL.HSL">
 	<summary>
- Make a random color based on the color provided and the depth involved
+ Thanks to https://web.archive.org/web/20110425154034/http://bobpowell.net/RGBHSB.htm for their work.
+ Changed the namespace from Namespace xRay.Toolkit.Utilities to nothing for convenience.
  </summary>
-	<param name="similarColor">The color to be based of</param>
 	<remarks></remarks>
-</member><member name="P:MiniGameEngine.Transitions.Transition`1.A">
+</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.#ctor(System.Drawing.Point,System.Double)">
+	<summary>
+ Make a new Circle object with origin and radius
+ </summary>
+	<param name="position">The center point of the circle</param>
+	<param name="radius">The size of the circle (remember:- it's half of the diameter)</param>
+	<remarks></remarks>
+</member><member name="P:MiniGameEngine.Examples.Shapes.Circle.circumference">
+	<summary>
+ Get the circumference of the circle
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:MiniGameEngine.Examples.Shapes.Circle.area">
+	<summary>
+ Get the area of the circle
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:MiniGameEngine.Examples.Shapes.Circle.diameter">
+	<summary>
+ Get of set the diameter of the circle
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.getPath">
+	<summary>
+ Return a circle path from the current circle object
+ </summary>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.getPoint(System.Double,System.Double,System.Drawing.Point)">
+	<summary>
+ Returns the position (point) of which the point should be determined by the radius, radians (not degrees, you must convert) and the origin.
+ </summary>
+	<param name="radius"></param>
+	<param name="radians"></param>
+	<param name="origin"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.getRadians(System.Double)">
+	<summary>
+ Converts degrees to radians.
+ </summary>
+	<param name="degrees"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.getDegrees(System.Double)">
+	<summary>
+ Converts radians to degrees
+ </summary>
+	<param name="radians"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:MiniGameEngine.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:MiniGameEngine.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:MiniGameEngine.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member><member name="P:MiniGameEngine.Transitions.Transition.ReverseUsesDuration">
+	<summary>
+ On true, it uses half the duration to create the reverse in the other half, thereby creating a 'whole' transition
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:MiniGameEngine.Transitions.Transition.A">
 	<summary>
  One end of the transition spectrum
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="P:MiniGameEngine.Transitions.Transition`1.B">
+</member><member name="P:MiniGameEngine.Transitions.Transition.B">
 	<summary>
  One end of the transition spectrum
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="P:MiniGameEngine.Transitions.Transition`1.C">
+</member><member name="P:MiniGameEngine.Transitions.Transition.C">
 	<summary>
  The current value in the transition
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="P:MiniGameEngine.Transitions.Transition`1.Reverse">
+</member><member name="P:MiniGameEngine.Transitions.Transition.Reverse">
 	<summary>
  Should the transition reverse?
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="P:MiniGameEngine.Transitions.Transition`1.Repeat">
+</member><member name="P:MiniGameEngine.Transitions.Transition.Repeat">
 	<summary>
  Should the transition repeat?
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Transitions.Transition`1.#ctor(`0,`0)">
+</member><member name="M:MiniGameEngine.Transitions.Transition.#ctor(System.Object,System.Object)">
 	<summary>
  Make a new basic transition
  </summary>
 	<param name="A">The place to start at</param>
 	<param name="B">The place to end at</param>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Transitions.Transition`1.#ctor(`0,`0,`0,System.TimeSpan,System.Boolean)">
+</member><member name="M:MiniGameEngine.Transitions.Transition.#ctor(System.Object,System.Object,System.Object,System.TimeSpan,System.Boolean)">
 	<summary>
  Make a transition from point A to B starting at Start Position
  </summary>
@@ -217,36 +308,36 @@ MiniGameEngine
 	<param name="Duration">How long you want the transition to last</param>
 	<param name="Enabled">Should we start it?</param>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Transitions.Transition`1.swapDirections">
+</member><member name="M:MiniGameEngine.Transitions.Transition.swapDirections">
 	<summary>
  Easy way to swap the transition
  </summary>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Transitions.Transition`1.ConvertFromRaw(System.Double[])">
+</member><member name="M:MiniGameEngine.Transitions.Transition.ConvertFromRaw(System.Double[])">
 	<summary>
  The converter function to convert the object we have changed back into a readable format
  </summary>
 	<param name="rawValues"></param>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Transitions.Transition`1.ConvertToRaw(`0)">
+</member><member name="M:MiniGameEngine.Transitions.Transition.ConvertToRaw(System.Object)">
 	<summary>
  The converter function to convert an object to a understandable transition type (double)
  </summary>
 	<param name="obj"></param>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="F:MiniGameEngine.Transitions.Transition`1._W">
+</member><member name="F:MiniGameEngine.Transitions.Transition._W">
 	<summary>
  The work we have to complete
  </summary>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Transitions.Transition`1.Evaluate">
+</member><member name="M:MiniGameEngine.Transitions.Transition.Evaluate">
 	<summary>
  Before each time a new transition occurs, the evaluation finds the amount of work to do and where to go, finally storing it in a TransitionWorkElement for later.
  </summary>
 	<remarks></remarks>
-</member><member name="P:MiniGameEngine.Transitions.Transition`1.Value(System.Double)">
+</member><member name="P:MiniGameEngine.Transitions.Transition.Value(System.Double)">
 	<summary>
  Retrieve the current value from the transition using the time difference.
  </summary>
@@ -254,14 +345,14 @@ MiniGameEngine
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="P:MiniGameEngine.Transitions.Transition`1.Value">
+</member><member name="P:MiniGameEngine.Transitions.Transition.Value">
 	<summary>
  Retrieve the current value from the transition.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="P:MiniGameEngine.Transitions.Transition`1.lastValue">
+</member><member name="P:MiniGameEngine.Transitions.Transition.lastValue">
 	<summary>
  Retrieve the last value that from the transition
  </summary>

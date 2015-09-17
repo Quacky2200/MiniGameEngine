@@ -6,64 +6,7 @@ SineDemo
 </name>
 </assembly>
 <members>
-<member name="M:SineDemo.Circle.#ctor(System.Drawing.Point,System.Double)">
-	<summary>
- Make a new Circle object with origin and radius
- </summary>
-	<param name="position">The center point of the circle</param>
-	<param name="radius">The size of the circle (remember:- it's half of the diameter)</param>
-	<remarks></remarks>
-</member><member name="P:SineDemo.Circle.circumference">
-	<summary>
- Get the circumference of the circle
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:SineDemo.Circle.area">
-	<summary>
- Get the area of the circle
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:SineDemo.Circle.diameter">
-	<summary>
- Get of set the diameter of the circle
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:SineDemo.Circle.getPath">
-	<summary>
- Return a circle path from the current circle object
- </summary>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:SineDemo.Circle.getPoint(System.Double,System.Double,System.Drawing.Point)">
-	<summary>
- Returns the position (point) of which the point should be determined by the radius, radians (not degrees, you must convert) and the origin.
- </summary>
-	<param name="radius"></param>
-	<param name="radians"></param>
-	<param name="origin"></param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:SineDemo.Circle.getRadians(System.Double)">
-	<summary>
- Converts degrees to radians.
- </summary>
-	<param name="degrees"></param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:SineDemo.Circle.getDegrees(System.Double)">
-	<summary>
- Converts radians to degrees
- </summary>
-	<param name="radians"></param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:SineDemo.My.Resources.Resources.ResourceManager">
+<member name="P:SineDemo.My.Resources.Resources.ResourceManager">
 	<summary>
   Returns the cached ResourceManager instance used by this class.
 </summary>

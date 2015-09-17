@@ -7,3 +7,15 @@ C:\Users\Matthew\Google Drive\SineWaveOverTime\MiniGameEngine\bin\Debug\MiniGame
 C:\Users\Matthew\Google Drive\SineWaveOverTime\MiniGameEngine\obj\Debug\MiniGameEngine.dll
 C:\Users\Matthew\Google Drive\SineWaveOverTime\MiniGameEngine\obj\Debug\MiniGameEngine.xml
 C:\Users\Matthew\Google Drive\SineWaveOverTime\MiniGameEngine\obj\Debug\MiniGameEngine.pdb
+C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\bin\Debug\MiniGameEngine.dll
+C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\bin\Debug\MiniGameEngine.pdb
+C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\bin\Debug\MiniGameEngine.xml
+C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\obj\Debug\Interop.WMPLib.dll
+C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\obj\Debug\MiniGameEngine.vbproj.ResolveComReference.cache
+C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\obj\Debug\MiniGameEngine.Resources.resources
+C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\obj\Debug\MiniGameEngine.vbproj.GenerateResource.Cache
+C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\obj\Debug\MiniGameEngine.dll
+C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\obj\Debug\MiniGameEngine.xml
+C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\obj\Debug\MiniGameEngine.pdb

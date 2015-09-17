@@ -20,3 +20,13 @@ C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\obj\Debug\SineDemo.vbproj.
 C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\obj\Debug\SineDemo.exe
 C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\obj\Debug\SineDemo.xml
 C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\obj\Debug\SineDemo.pdb
+C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\obj\Debug\SineDemo.vbprojResolveAssemblyReference.cache
+C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\obj\Debug\SineDemo.Game.resources
+C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\obj\Debug\SineDemo.Resources.resources
+C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\obj\Debug\SineDemo.vbproj.GenerateResource.Cache
+C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\bin\Debug\SineDemo.exe
+C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\bin\Debug\SineDemo.pdb
+C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\bin\Debug\SineDemo.xml
+C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\bin\Debug\MiniGameEngine.dll
+C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\bin\Debug\MiniGameEngine.pdb
+C:\Users\Matthew\Google Drive\MiniGameEngine\SineDemo\bin\Debug\MiniGameEngine.xml

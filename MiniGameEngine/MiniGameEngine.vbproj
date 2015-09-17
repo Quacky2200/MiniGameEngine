@@ -43,6 +43,10 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -64,21 +68,36 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Gaming\Color\ColorTools.vb" />
-    <Compile Include="Gaming\Color\RandomColor.vb" />
-    <Compile Include="Gaming\Color\RGBHSL.vb" />
-    <Compile Include="Gaming\Color\SimilarColor.vb" />
-    <Compile Include="Gaming\General\Game.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Gaming\General\GameObjects\GameObject.vb" />
-    <Compile Include="Gaming\General\GameObjects\TextEditElement.vb" />
-    <Compile Include="Gaming\General\GameObjects\TextElement.vb" />
-    <Compile Include="Gaming\General\Input.vb" />
-    <Compile Include="Gaming\General\Scene\EmptyScene.vb" />
-    <Compile Include="Gaming\General\Scene\Scene.vb" />
-    <Compile Include="Gaming\General\ThreadLoop.vb" />
-    <Compile Include="Gaming\Time\Watch.vb" />
+    <Compile Include="Examples\Droplets\Droplet.vb" />
+    <Compile Include="Examples\Droplets\SimpleEchoDroplets.vb" />
+    <Compile Include="Examples\Droplets\Waterdrops.vb" />
+    <Compile Include="Examples\Droplets\Raindrops.vb" />
+    <Compile Include="Examples\Scenes\DropletDebugTest.vb" />
+    <Compile Include="Examples\Scenes\EchoLocationDemo.vb" />
+    <Compile Include="Examples\Scenes\RaindropDemo.vb" />
+    <Compile Include="Examples\Shapes\Circle.vb" />
+    <Compile Include="Examples\Shapes\SineCircle\DoubleCosCirclePathType.vb" />
+    <Compile Include="Examples\Shapes\SineCircle\DoubleSineCirclePathType.vb" />
+    <Compile Include="Examples\Shapes\SineCircle\NormalSineCirclePathType.vb" />
+    <Compile Include="Examples\Shapes\SineCircle\PiSineType.vb" />
+    <Compile Include="Examples\Shapes\SineCircle\SineCircle.vb" />
+    <Compile Include="Examples\Shapes\SineCircle\SineCircleType.vb" />
+    <Compile Include="Gaming\General\Color\ColorTools.vb" />
+    <Compile Include="Gaming\General\Color\RandomColor.vb" />
+    <Compile Include="Gaming\General\Color\RGBHSL.vb" />
+    <Compile Include="Gaming\General\Color\SimilarColor.vb" />
+    <Compile Include="Examples\Scenes\SineDemo.vb" />
+    <Compile Include="Gaming\General\Threading\ThreadWork.vb" />
+    <Compile Include="Gaming\GameContainer.vb" />
+    <Compile Include="Gaming\GameObject.vb" />
+    <Compile Include="Gaming\Transitions\TransitionPropertyItem.vb" />
+    <Compile Include="Gaming\UI\TextEditElement.vb" />
+    <Compile Include="Gaming\UI\TextElement.vb" />
+    <Compile Include="Gaming\Input.vb" />
+    <Compile Include="Gaming\Scenes\EmptyScene.vb" />
+    <Compile Include="Gaming\Scenes\Scene.vb" />
+    <Compile Include="Gaming\General\Threading\ThreadLoop.vb" />
+    <Compile Include="Gaming\General\Time\Watch.vb" />
     <Compile Include="Gaming\Transitions\Color\ColorTransition.vb" />
     <Compile Include="Gaming\Transitions\Color\RandomColorTransition.vb" />
     <Compile Include="Gaming\Transitions\Double\DoubleTransition.vb" />
@@ -87,6 +106,7 @@
     <Compile Include="Gaming\Transitions\Point\RandomPointTransition.vb" />
     <Compile Include="Gaming\Transitions\Transition.vb" />
     <Compile Include="Gaming\Transitions\TransitionDirection.vb" />
+    <Compile Include="Gaming\Transitions\TransitionProperty.vb" />
     <Compile Include="Gaming\Transitions\TransitionWorkElement.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -105,9 +125,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Gaming\General\Game.resx">
-      <DependentUpon>Game.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
@@ -125,6 +142,21 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Examples\Scenes\Proctor.mp3" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

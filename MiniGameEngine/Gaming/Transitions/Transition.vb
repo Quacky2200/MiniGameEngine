@@ -1,33 +1,48 @@
 ﻿Namespace Transitions
-    Partial Public MustInherit Class Transition(Of T)
+    Partial Public MustInherit Class Transition
 #Region "Events & General Properties"
+        Public ReadOnly ID As String = Guid.NewGuid.ToString()
         Public Event OnFinish(sender As Object)
 
         Public Event OnRepeat(sender As Object)
 
         Public Event OnReverse(oldDirection As TransitionDirection, newDirection As TransitionDirection)
 
+        Public Sub Reset()
+            If isFinished Then
+                _isFinished = False
+                Direction = TransitionDirection.Forward
+                C = A
+            End If
+        End Sub
+        ''' <summary>
+        ''' On true, it uses half the duration to create the reverse in the other half, thereby creating a 'whole' transition
+        ''' </summary>
+        ''' <value></value>
+        ''' <returns></returns>
+        ''' <remarks></remarks>
+        Public Property ReverseUsesDuration As Boolean
         ''' <summary>
         ''' One end of the transition spectrum
         ''' </summary>
         ''' <value></value>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Property A As T
+        Public Property A As Object
         ''' <summary>
         ''' One end of the transition spectrum
         ''' </summary>
         ''' <value></value>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Property B As T
+        Public Property B As Object
         ''' <summary>
         ''' The current value in the transition
         ''' </summary>
         ''' <value></value>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Private Property C As T
+        Private Property C As Object
         ''' <summary>
         ''' Should the transition reverse?
         ''' </summary>
@@ -52,7 +67,7 @@
         ''' <param name="A">The place to start at</param>
         ''' <param name="B">The place to end at</param>
         ''' <remarks></remarks>
-        Public Sub New(A As T, B As T)
+        Public Sub New(A As Object, B As Object)
             Me.A = A
             Me.B = B
             Me.C = A
@@ -67,7 +82,7 @@
         ''' <param name="Duration">How long you want the transition to last</param>
         ''' <param name="Enabled">Should we start it?</param>
         ''' <remarks></remarks>
-        Public Sub New(StartPosition As T, A As T, B As T, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = False)
+        Public Sub New(StartPosition As Object, A As Object, B As Object, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = False)
             Me.A = A
             Me.B = B
             Me.C = StartPosition
@@ -85,7 +100,10 @@
                 Return _Enabled
             End Get
             Set(value As Boolean)
-                If value Then startTick = Now.Ticks()
+                If value Then
+                    startTick = Now.Ticks()
+                    Evaluate()
+                End If
                 _Enabled = value
             End Set
         End Property
@@ -144,14 +162,14 @@
         ''' <param name="rawValues"></param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public MustOverride Function ConvertFromRaw(ByVal rawValues As Double()) As T
+        Public MustOverride Function ConvertFromRaw(ByVal rawValues As Double()) As Object
         ''' <summary>
         ''' The converter function to convert an object to a understandable transition type (double)
         ''' </summary>
         ''' <param name="obj"></param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public MustOverride Function ConvertToRaw(ByVal obj As T) As Double()
+        Public MustOverride Function ConvertToRaw(ByVal obj As Object) As Double()
 
         ''' <summary>
         ''' The work we have to complete
@@ -178,7 +196,7 @@
         ''' <value></value>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Private ReadOnly Property Value(time As Double) As T
+        Private ReadOnly Property Value(time As Double) As Object
             'Using the TransitionWorkElement class, we can add the amount of work from the starting position 
             'according to the amount of time within the transition from 0-1 (percentage done from time difference)
             Get
@@ -190,9 +208,16 @@
                 Return C
             End Get
         End Property
+        Private Property _isFinished As Boolean = False
+        Public ReadOnly Property isFinished As Boolean
+            Get
+                Return _isFinished
+            End Get
+        End Property
         Private Sub Complete()
             _Enabled = False
             RaiseEvent OnFinish(Me)
+            _isFinished = True
         End Sub
         ''' <summary>
         ''' Retrieve the current value from the transition.
@@ -200,17 +225,17 @@
         ''' <value></value>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public ReadOnly Property Value As T
+        Public ReadOnly Property Value As Object
             Get
                 Dim difference As Long = GetDifference()
-                Dim v As Double = difference / (Duration.Ticks)
+                Dim v As Double = difference / (If(ReverseUsesDuration And Reverse, Duration.Ticks / 2, Duration.Ticks))
                 If (Enabled And Not Paused) AndAlso v < 1 Then
                     Return Value(v)
                 ElseIf (Enabled And Not Paused) AndAlso v >= 1 Then
                     'If we are running a normal transition (A->B) OR if we have finished the reverse process without repition, stop everything
                     If Not Reverse And Not Repeat Or (Reverse AndAlso Not Repeat AndAlso _Direction = TransitionDirection.Backward) Then
                         Complete()
-                        Exit Property
+                        Return lastValue
                     ElseIf Not Reverse And Repeat Then
                         'But, if we aren't reversing but we're repeating, start again from the first value
                         C = A
@@ -231,7 +256,7 @@
         ''' <value></value>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public ReadOnly Property lastValue As T
+        Public ReadOnly Property lastValue As Object
             Get
                 Return C
             End Get

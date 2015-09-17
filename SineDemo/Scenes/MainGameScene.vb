@@ -1,5 +1,7 @@
 ﻿Imports MiniGameEngine
 Imports MiniGameEngine.Transitions
+Imports MiniGameEngine.Examples.Shapes
+Imports MiniGameEngine.UI
 
 Public Class MainGameScene
     Inherits Scene
@@ -45,7 +47,7 @@ Public Class MainGameScene
 
     Private Chunks As New Dictionary(Of SineCircle, Object())
 
-    Public Sub New(game As Game)
+    Public Sub New(game As GameContainer)
         MyBase.New(game)
         Me.BackgroundColor = System.Drawing.Color.FromArgb(240, 40, 40, 40)
     End Sub
@@ -63,8 +65,8 @@ Public Class MainGameScene
         '    ))
         'Next
         'Add 
-        Game.addGameObject(ClickToBeginMsg)
-        Game.addTransition(ClickToBeginMsg.ColorProperty, ClickToBeginMsgColorTransition)
+        add(ClickToBeginMsg)
+        'Game.addTransition(ClickToBeginMsg.ColorProperty, ClickToBeginMsgColorTransition)
     End Sub
     Public Overrides Sub Render(g As Graphics)
         ' Dim Path As PointF() = Circle.getSinePath(10, 20).PathPoints
@@ -116,7 +118,7 @@ Public Class MainGameScene
     Public Overrides Sub Update(delta As Double)
         'BadBacteriaTransition.updateAll(delta)
         If goToDemo Then
-            Game.switchScenes(Of SineDemo)()
+            Game.switchScenes(Of Examples.Scenes.SineDemo)()
         End If
         ' lastDelta = delta
 

@@ -26,25 +26,25 @@ Namespace Transitions
         'End Sub
     End Class
 End Namespace
-Public Class HSLColorRange
-    Public Property hueBasePosition As Double = 0
-    Public Property hueRange As Double = 360
+'Public Class HSLColorRange
+'    Public Property hueBasePosition As Double = 0
+'    Public Property hueRange As Double = 360
 
-    Public Property saturationBasePosition As Double = 0
-    Public Property saturationRange As Double = 100
+'    Public Property saturationBasePosition As Double = 0
+'    Public Property saturationRange As Double = 100
 
-    Public Property lightnessBasePosition As Double = 0
-    Public Property lightnessRange As Integer = 100
+'    Public Property lightnessBasePosition As Double = 0
+'    Public Property lightnessRange As Integer = 100
 
-    Public random As New Random
+'    Public random As New Random
 
-    Public Sub New()
-    End Sub
-    Public Sub New(hueBasePosition As Double, hueRange As Double, saturationBasePosition As Double, saturationRange As Double, lightnessBasePosition As Double, lightnessRange As Double)
+'    Public Sub New()
+'    End Sub
+'    Public Sub New(hueBasePosition As Double, hueRange As Double, saturationBasePosition As Double, saturationRange As Double, lightnessBasePosition As Double, lightnessRange As Double)
 
-    End Sub
-    Public Function generate() As Color
-        Dim hue As Double = Math.Abs(hueBasePosition + If(hueRange < 0, random.Next(CInt(hueRange), 0), random.Next(0, CInt(Math.Abs(hueRange))))) Mod 360
-        Dim saturation As Double = random.Next()
-    End Function
-End Class
+'    End Sub
+'    Public Function generate() As Color
+'        Dim hue As Double = Math.Abs(hueBasePosition + If(hueRange < 0, random.Next(CInt(hueRange), 0), random.Next(0, CInt(Math.Abs(hueRange))))) Mod 360
+'        Dim saturation As Double = random.Next()
+'    End Function
+'End Class

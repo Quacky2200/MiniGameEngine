@@ -77,23 +77,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BadBacteria.vb" />
-    <Compile Include="BadBacteriaTransition.vb" />
-    <Compile Include="Shapes\Circle.vb" />
-    <Compile Include="Shapes\SineCircle\DoubleCosCirclePathType.vb" />
-    <Compile Include="Shapes\SineCircle\DoubleSineCirclePathType.vb" />
-    <Compile Include="Shapes\SineCircle\NormalSineCirclePathType.vb" />
-    <Compile Include="Shapes\SineCircle\PiSineType.vb" />
-    <Compile Include="Shapes\SineCircle\SineCircle.vb" />
-    <Compile Include="Shapes\SineCircle\SineCircleType.vb" />
     <Compile Include="Scenes\MainGameScene.vb" />
-    <Compile Include="Scenes\SineDemo.vb" />
-    <Compile Include="Scenes\SineDemoCircleExample.vb" />
-    <Compile Include="Settings.vb">
+    <Compile Include="Game.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Settings.Designer.vb">
-      <DependentUpon>Settings.vb</DependentUpon>
+    <Compile Include="Game.Designer.vb">
+      <DependentUpon>Game.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -113,8 +102,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Settings.resx">
-      <DependentUpon>Settings.vb</DependentUpon>
+    <EmbeddedResource Include="Game.resx">
+      <DependentUpon>Game.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -137,9 +126,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Scenes\Aaron_Smith_-_Dancin_%28KRONO_Remix%29.mp3" />
-  </ItemGroup>
-  <ItemGroup>
     <COMReference Include="WMPLib">
       <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
       <VersionMajor>1</VersionMajor>
@@ -155,6 +141,9 @@
       <Project>{097d6fa4-2987-4479-a5fc-482491ffdc59}</Project>
       <Name>MiniGameEngine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scenes\Proctor.mp3" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
