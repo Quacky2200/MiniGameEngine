@@ -164,7 +164,7 @@ Namespace Examples.Scenes
             'Find the executing assembly and store it
             Dim _assembly As [Assembly] = [Assembly].GetExecutingAssembly()
             'Get the song from the assembly
-            audioStream = _assembly.GetManifestResourceStream("MiniGameEngine.Proctor.mp3")
+            audioStream = _assembly.GetManifestResourceStream("MiniGameEngine.dancin.mp3")
             'Create a temporary stream for the music
             Dim _tempaudioStream As New IO.FileStream(tempMP3, IO.FileMode.Create)
             'Store the music somewhere

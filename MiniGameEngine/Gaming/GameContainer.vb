@@ -124,14 +124,21 @@ Public Class GameContainer
             lastFrame = Now.Ticks()
         End If
     End Sub
+    Private pausedBeforeUnfocus As Boolean = False
     Private Sub Me_Unfocus(sender As Object, e As EventArgs) Handles Window.LostFocus
-        If AutomaticallyPause Then
+        If Paused Then
+            pausedBeforeUnfocus = True
+        Else
+            pausedBeforeUnfocus = False
+        End If
+        If AutomaticallyPause And Not Paused Then
             Cursor.Clip = Nothing
             Paused = True
         End If
     End Sub
     Private Sub Me_Focus(sender As Object, e As EventArgs) Handles Window.GotFocus
-        If AutomaticallyPause Then Paused = False
+        If AutomaticallyPause And Not pausedBeforeUnfocus Then Paused = False
+        pausedBeforeUnfocus = False
     End Sub
     ''' <summary>
     ''' When we close, stop everything gracefully

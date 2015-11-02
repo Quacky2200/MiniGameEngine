@@ -6,7 +6,139 @@ MiniGameEngine
 </name>
 </assembly>
 <members>
-<member name="P:MiniGameEngine.GameContainer.AutomaticallyPause">
+<member name="M:MiniGameEngine.General.Color.SimilarColor.#ctor(System.Drawing.Color,System.Double)">
+	<summary>
+ Make a random color based on the color provided and the depth involved
+ </summary>
+	<param name="similarColor">The color to be based of</param>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Scene.Init">
+	<summary>
+ What happens when the scene is loaded
+ </summary>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Scene.Render(System.Drawing.Graphics)">
+	<summary>
+ The method that draws all the objects to the screen
+ </summary>
+	<param name="g">The current game graphics object</param>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Scene.Update(System.Double)">
+	<summary>
+ The scenes logic allowing the games state to change
+ </summary>
+	<param name="delta">The time before the last frame occured</param>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Scene.Enter(MiniGameEngine.Scene)">
+	<summary>
+ What happens when the scene appears on the screen
+ NOTE: Transitions will not run unless MyBase.Enter(lastScene) is used to set the scene active.
+ </summary>
+	<param name="lastScene">The previous scene shown before this one</param>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Scene.onPause">
+	<summary>
+ What happens when the game pauses (pausing occurs when the window loses focus)
+ </summary>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Scene.Leave(MiniGameEngine.Scene)">
+	<summary>
+ What happens when the scene is to disappear off the screen
+ </summary>
+	<param name="nextScene">The next scene to be shown</param>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Scene.ExitGame">
+	<summary>
+ What happens when the game is quitting.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:MiniGameEngine.Scene">
+	<summary>
+ A Scene class that must be inherited and use these functions when inherited. (See below)
+ </summary>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.#ctor(System.Drawing.Point,System.Double)">
+	<summary>
+ Make a new Circle object with origin and radius
+ </summary>
+	<param name="position">The center point of the circle</param>
+	<param name="radius">The size of the circle (remember:- it's half of the diameter)</param>
+	<remarks></remarks>
+</member><member name="P:MiniGameEngine.Examples.Shapes.Circle.circumference">
+	<summary>
+ Get the circumference of the circle
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:MiniGameEngine.Examples.Shapes.Circle.area">
+	<summary>
+ Get the area of the circle
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:MiniGameEngine.Examples.Shapes.Circle.diameter">
+	<summary>
+ Get of set the diameter of the circle
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.getPath">
+	<summary>
+ Return a circle path from the current circle object
+ </summary>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.getPoint(System.Double,System.Double,System.Drawing.Point)">
+	<summary>
+ Returns the position (point) of which the point should be determined by the radius, radians (not degrees, you must convert) and the origin.
+ </summary>
+	<param name="radius"></param>
+	<param name="radians"></param>
+	<param name="origin"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.getRadians(System.Double)">
+	<summary>
+ Converts degrees to radians.
+ </summary>
+	<param name="degrees"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.getDegrees(System.Double)">
+	<summary>
+ Converts radians to degrees
+ </summary>
+	<param name="radians"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:MiniGameEngine.General.Color.RandomColor.#ctor(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+	<summary>
+ Make a RandomColor object using minimum and maximum values. 
+ </summary>
+	<param name="minR">The minimum the R component will be</param>
+	<param name="maxR">The maximum the R component will be</param>
+	<param name="minG">The minimum the G component will be</param>
+	<param name="maxG">The maximum the G component will be</param>
+	<param name="minB">The minimum the B component will be</param>
+	<param name="maxB">The maximum the B component will be</param>
+	<remarks></remarks>
+</member><member name="P:MiniGameEngine.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:MiniGameEngine.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:MiniGameEngine.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member><member name="P:MiniGameEngine.GameContainer.AutomaticallyPause">
 	<summary>
  Automatically pauses the game once the focus is lost and will resume it when it regains focus
  </summary>
@@ -111,144 +243,12 @@ MiniGameEngine
  </summary>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Scene.Init">
-	<summary>
- What happens when the scene is loaded
- </summary>
-	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Scene.Render(System.Drawing.Graphics)">
-	<summary>
- The method that draws all the objects to the screen
- </summary>
-	<param name="g">The current game graphics object</param>
-	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Scene.Update(System.Double)">
-	<summary>
- The scenes logic allowing the games state to change
- </summary>
-	<param name="delta">The time before the last frame occured</param>
-	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Scene.Enter(MiniGameEngine.Scene)">
-	<summary>
- What happens when the scene appears on the screen
- NOTE: Transitions will not run unless MyBase.Enter(lastScene) is used to set the scene active.
- </summary>
-	<param name="lastScene">The previous scene shown before this one</param>
-	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Scene.onPause">
-	<summary>
- What happens when the game pauses (pausing occurs when the window loses focus)
- </summary>
-	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Scene.Leave(MiniGameEngine.Scene)">
-	<summary>
- What happens when the scene is to disappear off the screen
- </summary>
-	<param name="nextScene">The next scene to be shown</param>
-	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Scene.ExitGame">
-	<summary>
- What happens when the game is quitting.
- </summary>
-	<remarks></remarks>
-</member><member name="T:MiniGameEngine.Scene">
-	<summary>
- A Scene class that must be inherited and use these functions when inherited. (See below)
- </summary>
-	<remarks></remarks>
-</member><member name="M:MiniGameEngine.General.Color.SimilarColor.#ctor(System.Drawing.Color,System.Double)">
-	<summary>
- Make a random color based on the color provided and the depth involved
- </summary>
-	<param name="similarColor">The color to be based of</param>
-	<remarks></remarks>
-</member><member name="M:MiniGameEngine.General.Color.RandomColor.#ctor(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
-	<summary>
- Make a RandomColor object using minimum and maximum values. 
- </summary>
-	<param name="minR">The minimum the R component will be</param>
-	<param name="maxR">The maximum the R component will be</param>
-	<param name="minG">The minimum the G component will be</param>
-	<param name="maxG">The maximum the G component will be</param>
-	<param name="minB">The minimum the B component will be</param>
-	<param name="maxB">The maximum the B component will be</param>
-	<remarks></remarks>
 </member><member name="T:MiniGameEngine.General.Color.RGBHSL.HSL">
 	<summary>
  Thanks to https://web.archive.org/web/20110425154034/http://bobpowell.net/RGBHSB.htm for their work.
  Changed the namespace from Namespace xRay.Toolkit.Utilities to nothing for convenience.
  </summary>
 	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.#ctor(System.Drawing.Point,System.Double)">
-	<summary>
- Make a new Circle object with origin and radius
- </summary>
-	<param name="position">The center point of the circle</param>
-	<param name="radius">The size of the circle (remember:- it's half of the diameter)</param>
-	<remarks></remarks>
-</member><member name="P:MiniGameEngine.Examples.Shapes.Circle.circumference">
-	<summary>
- Get the circumference of the circle
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:MiniGameEngine.Examples.Shapes.Circle.area">
-	<summary>
- Get the area of the circle
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:MiniGameEngine.Examples.Shapes.Circle.diameter">
-	<summary>
- Get of set the diameter of the circle
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.getPath">
-	<summary>
- Return a circle path from the current circle object
- </summary>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.getPoint(System.Double,System.Double,System.Drawing.Point)">
-	<summary>
- Returns the position (point) of which the point should be determined by the radius, radians (not degrees, you must convert) and the origin.
- </summary>
-	<param name="radius"></param>
-	<param name="radians"></param>
-	<param name="origin"></param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.getRadians(System.Double)">
-	<summary>
- Converts degrees to radians.
- </summary>
-	<param name="degrees"></param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:MiniGameEngine.Examples.Shapes.Circle.getDegrees(System.Double)">
-	<summary>
- Converts radians to degrees
- </summary>
-	<param name="radians"></param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:MiniGameEngine.My.Resources.Resources.ResourceManager">
-	<summary>
-  Returns the cached ResourceManager instance used by this class.
-</summary>
-</member><member name="P:MiniGameEngine.My.Resources.Resources.Culture">
-	<summary>
-  Overrides the current thread's CurrentUICulture property for all
-  resource lookups using this strongly typed resource class.
-</summary>
-</member><member name="T:MiniGameEngine.My.Resources.Resources">
-	<summary>
-  A strongly-typed resource class, for looking up localized strings, etc.
-</summary>
 </member><member name="P:MiniGameEngine.Transitions.Transition.ReverseUsesDuration">
 	<summary>
  On true, it uses half the duration to create the reverse in the other half, thereby creating a 'whole' transition

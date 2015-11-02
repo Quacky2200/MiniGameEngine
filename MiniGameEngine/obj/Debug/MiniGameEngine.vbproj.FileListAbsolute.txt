@@ -19,3 +19,4 @@ C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\obj\Debug\MiniGameEn
 C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\obj\Debug\MiniGameEngine.dll
 C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\obj\Debug\MiniGameEngine.xml
 C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\obj\Debug\MiniGameEngine.pdb
+C:\Users\Matthew\Google Drive\MiniGameEngine\MiniGameEngine\obj\Debug\MiniGameEngine.vbprojResolveAssemblyReference.cache

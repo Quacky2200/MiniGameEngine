@@ -11,13 +11,8 @@ Namespace Examples.Droplets
             Dim circleDissipate As New Transitions.ColorTransition(dropletColor, dropletFadeColor) With {.Enabled = True}
             Dim circleMovement As New DoubleTransition(0, 0, dropletRadius, MovementDuration, True)
             Dim circle As Shapes.Circle = currentCircle
-            AddHandler circleDissipate.OnFinish, Sub(sender As Object)
-                                                     Scene.remove(circle.RadiusProperty, circleMovement)
-                                                     Scene.remove(circle.ColorProperty, circleDissipate)
-                                                     Scene.remove(circle)
-                                                 End Sub
-            Scene.add(circle.RadiusProperty, circleMovement)
-            Scene.add(circle.ColorProperty, circleDissipate)
+            Scene.add(circle.RadiusProperty, circleMovement, True)
+            Scene.add(circle.ColorProperty, circleDissipate, True, True)
             Threading.Thread.Sleep(0 + (50 * (dropletCount - i)))
         End Sub
     End Class
