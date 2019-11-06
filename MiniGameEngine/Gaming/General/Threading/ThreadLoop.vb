@@ -32,7 +32,6 @@ Namespace General.Threading
             Me.Routine = Routine
         End Sub
 
-        Public Const MAX_FPS = 60
         Public Sub ThreadLoop()
             Dim s As SpinWait
             While Enabled
@@ -41,5 +40,42 @@ Namespace General.Threading
                 s.SpinOnce()
             End While
         End Sub
+
     End Class
+
+
+    Partial Public MustInherit Class ThreadedLoop
+        Private [Loop] As Thread
+        Private Property _Enabled As Boolean = False
+        Public Property Enabled As Boolean
+            Get
+                Return _Enabled
+            End Get
+            Set(value As Boolean)
+                _Enabled = value
+                If _Enabled Then
+                    [Loop] = New Thread(AddressOf Me.ThreadLoop)
+                    [Loop].Start()
+                End If
+            End Set
+        End Property
+        Public Sub Start()
+            Enabled = True
+        End Sub
+        Public Sub [Stop]()
+            Enabled = False
+        End Sub
+        Public Sub ThreadLoop()
+            Dim s As SpinWait
+            While Enabled
+                Update()
+                'Thread.Sleep(1)
+                s.SpinOnce()
+            End While
+        End Sub
+        Public MustOverride Sub Update()
+    End Class
+    'Public Class GameThread
+    '    Inherits 
+    'End Class
 End Namespace

@@ -51,7 +51,9 @@ Namespace Examples.Scenes
         Private PausedTextColorTransition As New ColorTransition(Color.Black, Color.White) With {
             .Repeat = True,
             .Reverse = True,
-            .ReverseUsesDuration = True
+            .ReverseUsesDuration = True,
+            .Enabled = True,
+            .Duration = TimeSpan.FromSeconds(1)
         }
 
 #End Region
@@ -81,6 +83,7 @@ Namespace Examples.Scenes
 
         Public Sub advanceSineType()
             currentSineType = (currentSineType + 1) Mod circletypes.Count
+            ' Lucky Dip for next sine type
             'Dim dip As Integer = currentSineType
             'While dip = currentSineType
             '    dip = random.Next(0, circletypes.Count)
@@ -130,15 +133,17 @@ Namespace Examples.Scenes
 
         Public Sub New(game As GameContainer)
             MyBase.New(game)
+            game.AutomaticallyPause = False
             BackgroundColor = Color.White
+            Sine.fillColor = Color.Gold
         End Sub
 
         Public Overrides Sub Init()
-            'Add the sine circle
+            ' Add the sine circle
             add(Sine)
-            'Get the first Sine Type and change it
+            ' Get the first Sine Type and change it
             advanceSineType()
-            'add all of the Sine Circle Transitions
+            ' Add all of the Sine Circle Transitions
             add(Sine.RotationProperty, Rotation)
             add(Sine.PositionProperty, Position)
             add(Sine.ColorProperty, SineColorTransition)
@@ -146,62 +151,82 @@ Namespace Examples.Scenes
             add(Sine.DepthProperty, Depth)
             add(Sine.RadiusProperty, Radius)
 
-            
-            'Add the debugging information text
+
+            ' Add the debugging information text
             add(DebuggingInfomation)
-            'Add the debugging information transition
+            ' Add the debugging information transition
             add(DebuggingInfomation.ColorProperty, TextColorTransition)
-            'Add the fullscreen information text
+            ' Add the fullscreen information text
             add(FullScreenInformation)
-            'Add the same debugging transition to fullscreen text
+            ' Add the same debugging transition to fullscreen text
             add(FullScreenInformation.ColorProperty, TextColorTransition)
-            'Add paused text
-            add(PausedInformation)
-            'Add paused transition
-            add(PausedInformation.ColorProperty, PausedTextColorTransition)
             ' Make an audio stream to open our music
             Dim audioStream As IO.Stream
-            'Find the executing assembly and store it
+            ' Find the executing assembly and store it
             Dim _assembly As [Assembly] = [Assembly].GetExecutingAssembly()
-            'Get the song from the assembly
+            ' Get the song from the assembly
             audioStream = _assembly.GetManifestResourceStream("MiniGameEngine.dancin.mp3")
-            'Create a temporary stream for the music
+            ' Create a temporary stream for the music
             Dim _tempaudioStream As New IO.FileStream(tempMP3, IO.FileMode.Create)
-            'Store the music somewhere
+            ' Store the music somewhere
             Dim data(CInt(audioStream.Length)) As Byte
-            'Read the music from the stream into the data byte array variable
+            ' Read the music from the stream into the data byte array variable
             audioStream.Read(data, 0, CInt(audioStream.Length))
-            'Write the music to the temporary file using the stream
+            ' Write the music to the temporary file using the stream
             _tempaudioStream.Write(data, 0, CInt(audioStream.Length))
-            'Close the stream, now ready to be played
+            ' Close the stream, now ready to be played
             _tempaudioStream.Close()
-            'Play the music from temporary file 
+            ' Play the music from temporary file 
             player.URL = tempMP3
             player.settings.setMode("loop", True)
             player.controls.play()
         End Sub
 #End Region
 
-#Region "Mouse Positions"
+#Region "Input Events"
         Public Overrides Sub MouseClick(MouseButton As MouseButtons)
             If MouseButton = MouseButtons.Right Then
-                'Toggle the background color on right mouse button click
+                ' Toggle the background color on right mouse button click
                 BackgroundColor = If(BackgroundColor = Color.White, Color.Black, Color.White)
             ElseIf MouseButton = MouseButtons.Left Then
-                'Toggle pause on the left mouse button click
-                Game.Paused = If(Game.Paused, False, True)
+                ' Toggle pause on the left mouse button click
+                Game.Paused = Not Game.Paused
             ElseIf MouseButton = MouseButtons.Middle Then
-                'Advance to the next sine type
+                ' Advance to the next sine type
                 advanceSineType()
             End If
         End Sub
+
+        Public Overrides Sub KeyPress(KeyCode As Keys)
+            If KeyCode = Keys.Space Then
+                advanceSineType()
+            ElseIf KeyCode = Keys.P Then
+                Game.Paused = Not Game.Paused
+            ElseIf KeyCode = Keys.M Then
+                player.settings.mute = Not player.settings.mute
+            End If
+        End Sub
+
         Public Overrides Sub onPause()
             If Game.Paused Then
+                Sine.Pause()
+                DebuggingInfomation.Pause()
                 player.controls.pause()
+                ' Add paused text
+                add(PausedInformation)
+                ' Add paused transition
+                add(PausedInformation.ColorProperty, PausedTextColorTransition)
             Else
+                Sine.Resume()
+                DebuggingInfomation.Resume()
+                ' Remove paused text
+                remove(PausedInformation)
+                ' Remove paused transition
+                remove(PausedTextColorTransition)
                 player.controls.play()
             End If
         End Sub
+
         Public Overrides Sub MouseDoubleClick(MouseButton As MouseButtons)
             'Change window fullscreen mode for double click on left mouse button
             If MouseButton = MouseButtons.Left Then

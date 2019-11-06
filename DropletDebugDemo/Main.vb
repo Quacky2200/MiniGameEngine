@@ -9,7 +9,7 @@ Public Class Main
         End
     End Sub
     Private Sub Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Dim Game As New GameContainer(Me) With {.Clip = True}
+        Dim Game As New GameContainer(Me) With {.Clip = False}
         Dim EchoScene As New Examples.Scenes.DropletDebugTest(Game)
         Game.add(EchoScene)
         Game.switchScenes(Of Examples.Scenes.DropletDebugTest)()

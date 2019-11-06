@@ -6,10 +6,13 @@ Imports System.Windows.Forms
 Imports Newtonsoft.Json
 
 Public Class GameContainer
+
 #Region "Threading"
     Private GraphicsThread As New ThreadLoop(AddressOf Me.GraphicsMainThread)
     Private GameThread As New ThreadLoop(AddressOf Me.GameMainThread)
+
     Public Property Enabled As Boolean = False
+
     ''' <summary>
     ''' Automatically pauses the game once the focus is lost and will resume it when it regains focus
     ''' </summary>
@@ -17,6 +20,8 @@ Public Class GameContainer
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Property AutomaticallyPause As Boolean = True
+    Public Property PauseThreads As Boolean = False
+
     Private Property _Paused As Boolean = False
     Public Property Paused As Boolean
         Get
@@ -28,14 +33,15 @@ Public Class GameContainer
             End If
             _Paused = value
             While Not IsNothing(currentScene)
-                For Each t In currentScene.AllTransitions
-                    t.Transition.Paused = value
-                Next
+                'For Each t In currentScene.AllTransitions
+                '    t.Transition.Paused = value
+                'Next
                 currentScene.onPause()
                 Exit While
             End While
         End Set
     End Property
+
     Public Sub Start()
         Enabled = True
         GraphicsThread.Start()
@@ -51,22 +57,25 @@ Public Class GameContainer
     ''' </summary>
     ''' <remarks></remarks>
     Private Sub GraphicsMainThread()
-        If Enabled And Not Paused Then Me._Window.Invalidate()
+        If Enabled AndAlso Not (Paused AndAlso PauseThreads) Then Me._Window.Invalidate()
     End Sub
-   
+
     ''' <summary>
     ''' Force the game update
     ''' </summary>
     ''' <remarks></remarks>
     Private Sub GameMainThread()
-        If Not IsNothing(currentScene) AndAlso Enabled AndAlso Not Paused Then
-            Dim delta As Double = getDelta() 'Now.Ticks() - lastFrame '(Now.Ticks - lastFrame) / 10000 
+        If Not IsNothing(currentScene) AndAlso Enabled AndAlso Not (Paused AndAlso PauseThreads) Then
+            Dim delta As Double = getDelta()
             currentScene.Update(delta)
             While Not IsNothing(currentScene)
-                For Each Obj As GameObject In currentScene.AllGameObjects.ToList.Where(Function(x) Not IsNothing(x) AndAlso x.Visible).ToList().OrderBy(Function(x) x.zIndex)
-                    Obj.Update(delta)
-                Next
-                Exit While
+                SyncLock currentScene.AllGameObjects
+                    For Each Obj As GameObject In currentScene.AllGameObjects '.ToList.Where(Function(x) Not IsNothing(x) AndAlso x.Visible).ToList().OrderBy(Function(x) x.zIndex)
+                        Obj.Update(delta)
+                    Next
+                    Exit While
+                End SyncLock
+
             End While
         End If
     End Sub
@@ -74,6 +83,7 @@ Public Class GameContainer
 
 #Region "Constructor"
     Public WithEvents Window As Form
+    Private Shared _Instance As GameContainer = Nothing
     Public Sub New(Window As Form)
         Me.Window = Window
         _Input = New Input(Me)
@@ -86,9 +96,20 @@ Public Class GameContainer
         add(currentScene)
         switchScenes(Of EmptyScene)()
     End Sub
+
+    Public Shared ReadOnly Property Instance
+        Get
+            If (IsNothing(_Instance)) Then
+                Throw New Exception("Instance has not yet been initialised")
+            End If
+            Return _Instance
+        End Get
+    End Property
 #End Region
 
 #Region "Container Events"
+    Private pausedBeforeUnfocus As Boolean = False
+
     ''' <summary>
     ''' Start the game when the window loads
     ''' </summary>
@@ -116,15 +137,18 @@ Public Class GameContainer
             e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias
             e.Graphics.InterpolationMode = Drawing2D.InterpolationMode.HighQualityBicubic
             currentScene.Render(e.Graphics)
-            For Each Obj As GameObject In currentScene.AllGameObjects.ToList.Where(Function(x) x.Visible).ToList().OrderBy(Function(x) x.zIndex)
-                Obj.Render(e.Graphics)
-            Next
+            SyncLock currentScene.AllGameObjects
+                For Each Obj As GameObject In currentScene.AllGameObjects
+                    Obj.Render(e.Graphics)
+                Next
+            End SyncLock
             updateFPS()
-            If showFPS Then e.Graphics.DrawString("FPS: " & fps, Me._Window.Font, Brushes.Red, New Point(0, 0))
+            Dim fpsText = String.Format("FPS: {0} (Avg: {1}, {2} GameObjects, {3} Transitions)", fps, fpsAvg, currentScene.AllGameObjects.Count, currentScene.AllTransitions.Count)
+            If showFPS Then e.Graphics.DrawString(fpsText, Me._Window.Font, Brushes.Red, New Point(0, 0))
             lastFrame = Now.Ticks()
         End If
     End Sub
-    Private pausedBeforeUnfocus As Boolean = False
+
     Private Sub Me_Unfocus(sender As Object, e As EventArgs) Handles Window.LostFocus
         If Paused Then
             pausedBeforeUnfocus = True
@@ -147,15 +171,12 @@ Public Class GameContainer
     ''' <param name="e">The event arguments - form closing</param>
     ''' <remarks>We can use e.closing = false to prevent the window from closing</remarks>
     Private Sub Me_Closing(sender As Object, e As System.Windows.Forms.FormClosingEventArgs) Handles Window.FormClosing
+        [Stop]()
         Input.Detach()
         currentScene.ExitGame()
-        [Stop]()
+        Scenes.Clear()
         _Input = Nothing
         _currentScene = Nothing
-        For Each Scene In Scenes
-
-        Next
-        Scenes.Clear()
     End Sub
 
     Public Sub Me_SizeChanged(sender As Object, e As EventArgs) Handles Window.SizeChanged
@@ -309,8 +330,10 @@ Public Class GameContainer
 
 #Region "Timing"
     Private Property lastFPS As Long = getTime()
+    Private Property FPSCounts As List(Of Integer) = New List(Of Integer)
     Private Property fpsCounter As Integer = 0
     Public Property fps As Integer = 0
+    Public Property fpsAvg As Integer = 0
     Private Property lastFrame As Long = getTime()
     ''' <summary>
     ''' Get the time in milliseconds
@@ -330,14 +353,24 @@ Public Class GameContainer
         Dim time As Long = getTime()
         Dim delta As Double = (time - lastFrame) / TimeSpan.TicksPerMillisecond
         lastFrame = time
+
         Return If(delta < 0, 0, delta)
     End Function
+
     Private Sub updateFPS()
+        ' FPS Counting...
         If (getTime() - lastFPS) > 1000 Then
             fps = fpsCounter
+            If (FPSCounts.Count > 4) Then
+                FPSCounts.Remove(0)
+            End If
+
+            FPSCounts.Add(fps)
             fpsCounter = 0
             lastFPS += 1000
         End If
+
+        fpsAvg = If(FPSCounts.Count > 0, FPSCounts.Average(), fps)
         fpsCounter += 1
     End Sub
     Public Property showFPS As Boolean = True

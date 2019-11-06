@@ -24,22 +24,25 @@ Namespace Examples.Scenes
         Public Overrides Sub MouseClick(MouseButton As MouseButtons)
             Select Case MouseButton
                 Case MouseButtons.Left
-                    Drops = New SimpleEchoDroplets(Me)
+                    Dim t As New Examples.Shapes.Raindrop2D(lastKnownLocation, 100) With {.lineColor = Color.AliceBlue}
+                    add(t)
+
+                    'Drops = New SimpleEchoDroplets(Me)
                 Case MouseButtons.Right
-                    Drops = New Raindrops(Me) With {.dropletFadeColor = Color.FromArgb(0, 0, 68, 255), .dropletColor = Color.FromArgb(100, 138, 226, 255)}
+                    'Drops = New Raindrops(Me) With {.dropletFadeColor = Color.FromArgb(0, 0, 68, 255), .dropletColor = Color.FromArgb(100, 138, 226, 255)}
                 Case Else
-                    Drops = New Waterdrops(Me) With {.dropletFadeColor = Color.FromArgb(0, 0, 68, 255), .dropletColor = Color.FromArgb(100, 138, 226, 255)}
+                    ' Drops = New Waterdrops(Me) With {.dropletFadeColor = Color.FromArgb(0, 0, 68, 255), .dropletColor = Color.FromArgb(100, 138, 226, 255)}
             End Select
 
             DropTypes.Position = Me.Game.MIDDLE_POS
-            DropTypes.Text = Drops.GetType.Name.ToString
+            DropTypes.Text = "Test" 'Drops.GetType.Name.ToString
             If FadeInOut.Enabled = False Then
                 FadeInOut.Reset()
                 FadeInOut.Enabled = True
             End If
 
             add(DropTypes.ColorProperty, FadeInOut)
-            ThreadWork.Start(Sub() Drops.Spawn(lastKnownLocation))
+            'ThreadWork.Start(Sub() Drops.Spawn(lastKnownLocation))
         End Sub
         Private lastKnownLocation As New Point(0, 0)
         Public Overrides Sub MouseMove(Location As Point)

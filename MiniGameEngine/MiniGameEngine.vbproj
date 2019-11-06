@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Examples\Droplets\Droplet.vb" />
+    <Compile Include="Examples\Droplets\SmoothEchoDroplets.vb" />
     <Compile Include="Examples\Droplets\SimpleEchoDroplets.vb" />
     <Compile Include="Examples\Droplets\Waterdrops.vb" />
     <Compile Include="Examples\Droplets\Raindrops.vb" />
@@ -76,6 +77,7 @@
     <Compile Include="Examples\Scenes\EchoLocationDemo.vb" />
     <Compile Include="Examples\Scenes\RaindropDemo.vb" />
     <Compile Include="Examples\Shapes\Circle.vb" />
+    <Compile Include="Examples\Shapes\PathedCircle.vb" />
     <Compile Include="Examples\Shapes\SineCircle\DoubleCosCirclePathType.vb" />
     <Compile Include="Examples\Shapes\SineCircle\DoubleSineCirclePathType.vb" />
     <Compile Include="Examples\Shapes\SineCircle\NormalSineCirclePathType.vb" />

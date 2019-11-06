@@ -4,6 +4,8 @@ Namespace Examples.Scenes
         Inherits Scene
         Public Sub New(Game As GameContainer)
             MyBase.New(Game)
+            Game.Clip = False
+
         End Sub
         Dim Echo As New Examples.Droplets.SimpleEchoDroplets(Me)
         Public Overrides Sub MouseClick(MouseButton As Windows.Forms.MouseButtons)

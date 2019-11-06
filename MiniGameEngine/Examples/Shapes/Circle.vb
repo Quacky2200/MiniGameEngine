@@ -22,9 +22,9 @@ Namespace Examples.Shapes
 #End Region
 
 #Region "Transition Properties"
-        Private _ColorProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.Transition)
-                                                                    Me.lineColor = CType(Transition.Value, Color)
-                                                                End Sub)
+        Private _ColorProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transitions.Transition)
+                                                                 Me.lineColor = CType(Transition.Value, Color)
+                                                             End Sub)
 
         Public ReadOnly Property ColorProperty As TransitionProperty
             Get
@@ -32,27 +32,27 @@ Namespace Examples.Shapes
             End Get
         End Property
 
-        Private _FillProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.Transition)
-                                                                   Me.fillColor = CType(Transition.Value, Color)
-                                                               End Sub)
+        Private _FillProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transitions.Transition)
+                                                                Me.fillColor = CType(Transition.Value, Color)
+                                                            End Sub)
         Public ReadOnly Property FillProperty As TransitionProperty
             Get
                 Return _FillProperty
             End Get
         End Property
 
-        Private _RadiusProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.Transition)
-                                                                     Me.radius = CDbl(Transition.Value)
-                                                                 End Sub)
+        Private _RadiusProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transitions.Transition)
+                                                                  Me.radius = CDbl(Transition.Value)
+                                                              End Sub)
         Public ReadOnly Property RadiusProperty As TransitionProperty
             Get
                 Return _RadiusProperty
             End Get
         End Property
 
-        Private _lineWidthProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.Transition)
-                                                                        Me.lineWidth = CInt(Transition.Value)
-                                                                    End Sub)
+        Private _lineWidthProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transitions.Transition)
+                                                                     Me.lineWidth = CInt(Transition.Value)
+                                                                 End Sub)
         Public ReadOnly Property lineWidthProperty As TransitionProperty
             Get
                 Return _lineWidthProperty
@@ -99,20 +99,6 @@ Namespace Examples.Shapes
             End Set
         End Property
         ''' <summary>
-        ''' Return a circle path from the current circle object
-        ''' </summary>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Function getPath() As Drawing2D.GraphicsPath
-            Dim positions As New List(Of PointF)
-            For i = 0 To 360
-                positions.Add(getPoint(radius, getRadians(i), Me.Position))
-            Next
-            Dim Path As New Drawing2D.GraphicsPath
-            Path.AddCurve(positions.ToArray)
-            Return Path
-        End Function
-        ''' <summary>
         ''' Returns the position (point) of which the point should be determined by the radius, radians (not degrees, you must convert) and the origin.
         ''' </summary>
         ''' <param name="radius"></param>
@@ -145,8 +131,10 @@ Namespace Examples.Shapes
         End Function
 
         Public Overrides Sub Render(Graphics As Graphics)
-            Graphics.DrawClosedCurve(New Pen(lineColor), Me.getPath().PathPoints)
-            Graphics.FillClosedCurve(New SolidBrush(fillColor), Me.getPath().PathPoints)
+            Graphics.DrawEllipse(New Pen(lineColor, lineWidth), CInt(Position.X - radius), CInt(Position.Y - radius), CInt(diameter), CInt(diameter))
+            Graphics.FillEllipse(New SolidBrush(fillColor), CInt(Position.X - radius), CInt(Position.Y - radius), CInt(diameter), CInt(diameter))
+            ' Graphics.DrawClosedCurve(New Pen(lineColor), Me.getPath().PathPoints)
+            ' Graphics.FillClosedCurve(New SolidBrush(fillColor), Me.getPath().PathPoints)
         End Sub
         Public Function inBoundries(Point As Point) As Boolean
             Dim SquareDistance As Double = (Position.X - Point.X) ^ 2 + (Position.Y - Point.Y) ^ 2
@@ -155,5 +143,23 @@ Namespace Examples.Shapes
         Public Overrides Sub Update(delta As Double)
 
         End Sub
+    End Class
+    Public Class Raindrop2D
+        Inherits Circle
+
+        Public Sub New(position As Point, radius As Double)
+            MyBase.New(position, radius)
+        End Sub
+
+        Public Property refractAmount As Integer
+
+        'Public Overrides Sub Render(Graphics As Graphics)
+        '    MyBase.Render(Graphics)
+        '    For i = 1 To refractAmount
+        '        Dim currentDiameter As Double = Math.Max((diameter / refractAmount) * i, 0)
+        '        Graphics.DrawEllipse(New Pen(lineColor), CInt(Position.X - radius), CInt(Position.Y - radius), CInt(currentDiameter), CInt(currentDiameter))
+        '        Graphics.FillEllipse(New SolidBrush(fillColor), CInt(Position.X - radius), CInt(Position.Y - radius), CInt(currentDiameter), CInt(currentDiameter))
+        '    Next
+        'End Sub
     End Class
 End Namespace

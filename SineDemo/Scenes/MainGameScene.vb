@@ -6,7 +6,7 @@ Imports MiniGameEngine.UI
 Public Class MainGameScene
     Inherits Scene
 
-#Region ""
+#Region "Click Msgs"
 
     Private ClickToBeginMsg As New TextElement("Click to Begin") With {
     .Color = Color.White,
@@ -23,12 +23,6 @@ Public Class MainGameScene
 
 #End Region
 
-
-
-
-
-
-
     Const PAUSE_MESSAGE As String = "[PAUSED] - Press Escape again to Quit, or Click to Continue."
     ' Const BEGIN_MESSAGE As String = "Click to Begin"
 
@@ -36,9 +30,9 @@ Public Class MainGameScene
     ' Private lastDelta As Double = 0
     ' Private lastMousePosition As Point
     'Private MyFont As New System.Drawing.Font("consolas", 15) '("KOMIKA AXIS"
-    'Private MyMessage As String = BEGIN_MESSAGE
+    Private MyMessage As String = PAUSE_MESSAGE
 
-    Dim Circle As New SineCircle(CharacterPosition, Game.Width / 10, 10, 20)
+    'Dim Circle As New SineCircle(CharacterPosition, Game.Width / 10, 10, 20)
     'Private Color As New ColorStepTransition(System.Drawing.Color.FromArgb(0, 250, 250, 250), Color.White) With {.repeat = True, .speed = 550}
     Private Ready As Boolean = False
     Private Begin As Boolean = False
@@ -79,24 +73,24 @@ Public Class MainGameScene
         'g.FillClosedCurve(New SolidBrush(Color.LawnGreen), Path2)
     End Sub
     Public Overrides Sub KeyDown(KeyCode As Keys)
-        'Select Case KeyCode
-        '    Case Keys.Escape
-        '        If MyMessage = PAUSE_MESSAGE And Begin And Not Ready Then
-        '            End
-        '        ElseIf MyMessage <> PAUSE_MESSAGE And MyMessage = "" And Begin Then
-        '            Ready = False
-        '            ' colorFade1.Reverse = False
-        '            ' colorFade1.ReverseDirection()
-        '            ' colorFade1.Start()
-        '            MyMessage = PAUSE_MESSAGE
-        '        End If
-        '    Case Keys.Tab
-        '        If MyMessage = PAUSE_MESSAGE And Begin And Not Ready Then
-        '            goToDemo = True
-        '        End If
-        '    Case Else
-        '        Debug.WriteLine(KeyCode.ToString)
-        'End Select
+        Select Case KeyCode
+            Case Keys.Escape
+                If MyMessage = PAUSE_MESSAGE And Begin And Not Ready Then
+                    End
+                ElseIf MyMessage <> PAUSE_MESSAGE And MyMessage = "" And Begin Then
+                    Ready = False
+                    ' colorFade1.Reverse = False
+                    ' colorFade1.ReverseDirection()
+                    ' colorFade1.Start()
+                    MyMessage = PAUSE_MESSAGE
+                End If
+            Case Keys.Tab
+                If MyMessage = PAUSE_MESSAGE And Begin And Not Ready Then
+                    goToDemo = True
+                End If
+            Case Else
+                Debug.WriteLine(KeyCode.ToString)
+        End Select
     End Sub
     Public Overrides Sub MouseMove(Location As Point)
         'lastMousePosition = Location

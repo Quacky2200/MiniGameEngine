@@ -20,37 +20,41 @@ Partial Public MustInherit Class Scene
             Return _active
         End Get
     End Property
-    Private TransitionThread As New General.Threading.ThreadLoop(AddressOf Me.TransitionMainThread) With {.Enabled = True}
+
+    Private TransitionThread As New General.Threading.ThreadLoop(AddressOf Me.TransitionMainThread)
+
     Private Sub TransitionMainThread()
-        If Game.Enabled And Not Game.Paused AndAlso _active Then
-            Dim t As TransitionPropertyItem() = AllTransitions
-            For Each item In t
-                item.TransitionProperty.Work(item.Transition)
-                If item.Transition.isFinished AndAlso item.AutomaticallyRemoveObject Then
-                    Dim obj = AllGameObjects.Where(Function(x) Not IsNothing(x) AndAlso x.ID = item.TransitionProperty.ObjectID)
-                    If obj.Count >= 1 Then
-                        ' Debug.Print("automatically removed object [name:{0}, ID:{1}] and transition [ID:{2}]", obj.GetType.Name, item.TransitionProperty.ObjectID, item.TransitionProperty.ID)
-                        remove(obj.Single)
+        If Game.Enabled AndAlso Not (Game.Paused AndAlso Game.PauseThreads) AndAlso _active AndAlso AllTransitions.Count > 0 Then
+            SyncLock AllTransitions
+                For i = AllTransitions.Count - 1 To 0 Step -1
+                    Dim Item As TransitionPropertyItem = AllTransitions(i)
+                    Item.TransitionProperty.Work(Item.Transition)
+                    If Item.Transition.isFinished AndAlso Item.AutomaticallyRemoveObject Then
+                        Dim obj = Item.TransitionProperty.Reference
+                        'Dim formattedStr = String.Format("Automatically removed object [name:{0}, ID:{1}] and transition [ID:{2}]", obj.GetType().Name, obj.ID, Item.TransitionProperty.ID)
+                        remove(Item.TransitionProperty.Reference)
+                        'Debug.Print(formattedStr)
                     End If
-                End If
-                If item.Transition.isFinished AndAlso item.AutomaticallyRemoveTransition Then
-                    ' Debug.Print("automatically removed [TransitionProperty:{0}, Transition:{1}]", item.TransitionProperty.ID, item.Transition.ID)
-                    remove(item.TransitionProperty, item.Transition)
-                End If
-            Next
+                    If Item.Transition.isFinished AndAlso Item.AutomaticallyRemoveTransition Then
+                        'Debug.Print("Automatically removed [TransitionProperty:{0}, Transition:{1}]", Item.TransitionProperty.ID, Item.Transition.ID)
+                        remove(Item.Transition)
+                    End If
+                Next
+            End SyncLock
         End If
     End Sub
-    Public ReadOnly Property AllGameObjects As GameObject()
+
+    Public ReadOnly Property AllGameObjects As List(Of GameObject)
         Get
             SyncLock GameObjects
-                Return If(GameObjects.Count = 0, {}, GameObjects.ToArray)
+                Return GameObjects
             End SyncLock
         End Get
     End Property
-    Public ReadOnly Property AllTransitions As TransitionPropertyItem()
+    Public ReadOnly Property AllTransitions As List(Of TransitionPropertyItem)
         Get
             SyncLock Transitions
-                Return If(Transitions.Count = 0, {}, Transitions.ToArray)
+                Return Transitions
             End SyncLock
         End Get
     End Property
@@ -75,13 +79,37 @@ Partial Public MustInherit Class Scene
             GameObjects.Remove(GameObject)
         End SyncLock
     End Sub
-    Public Sub remove(ByRef TransitionProperty As TransitionProperty, Transition As Transition)
+    Public Sub remove(ByRef TransitionProperty As TransitionProperty)
         SyncLock Transitions
-            Transitions.Remove(New TransitionPropertyItem(TransitionProperty, Transition))
+            Dim Remove As TransitionPropertyItem = Nothing
+            For Each Prop In Transitions
+                If (Prop.TransitionProperty.ID = TransitionProperty.ID) Then
+                    Remove = Prop
+                    Exit For
+                End If
+            Next
+            If (Not IsNothing(Remove)) Then
+                Transitions.Remove(Remove)
+            End If
+        End SyncLock
+    End Sub
+    Public Sub remove(ByRef Transition As Transition)
+        SyncLock Transitions
+            Dim Remove As TransitionPropertyItem = Nothing
+            For Each Prop In Transitions
+                If (Prop.Transition.ID = Transition.ID) Then
+                    Remove = Prop
+                    Exit For
+                End If
+            Next
+            If (Not IsNothing(Remove)) Then
+                Transitions.Remove(Remove)
+            End If
         End SyncLock
     End Sub
     Public Sub New(Game As GameContainer)
         Me.Game = Game
+        TransitionThread.Enabled = True
     End Sub
     ''' <summary>
     ''' What happens when the scene is loaded
@@ -108,6 +136,7 @@ Partial Public MustInherit Class Scene
     ''' <remarks></remarks>
     Public Overridable Sub Enter(lastScene As Scene)
         _active = True
+        TransitionThread.Enabled = True
     End Sub
     ''' <summary>
     ''' What happens when the game pauses (pausing occurs when the window loses focus)
@@ -123,6 +152,7 @@ Partial Public MustInherit Class Scene
     ''' <remarks></remarks>
     Public Overridable Sub Leave(nextScene As Scene)
         _active = False
+        TransitionThread.Enabled = False
     End Sub
     ''' <summary>
     ''' What happens when the game is quitting.
@@ -130,6 +160,7 @@ Partial Public MustInherit Class Scene
     ''' <remarks></remarks>
     Public Overridable Sub ExitGame()
         _active = False
+        TransitionThread.Enabled = False
     End Sub
     Public Overridable Sub KeyDown(KeyCode As Keys)
 
@@ -153,6 +184,10 @@ Partial Public MustInherit Class Scene
 
     End Sub
     Public Overridable Sub MouseMove(Location As Point)
+
+    End Sub
+
+    Public Overridable Sub WindowSizeChange()
 
     End Sub
 End Class

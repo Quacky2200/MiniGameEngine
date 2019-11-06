@@ -2,8 +2,9 @@
 Imports MiniGameEngine.Transitions
 
 Public MustInherit Class GameObject
-    'Private Property Buffer As BufferedGraphics
-    'Private Property Game As Game
+
+    Friend Property _PauseTransitions As Boolean = False
+
     Public ReadOnly ID As String = Guid.NewGuid.ToString
     Public Property Position As New Point(0, 0)
     Private Property _Rotation As Integer = 0
@@ -16,32 +17,55 @@ Public MustInherit Class GameObject
             _Rotation = Math.Min(360, Math.Max(0, value))
         End Set
     End Property
-    Private _PositionProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transition)
-                                                                   Me.Position = Transition.Value
-                                                               End Sub)
+    Private _PositionProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transition)
+                                                                Me.Position = Transition.Value
+                                                            End Sub)
     Public ReadOnly Property PositionProperty As TransitionProperty
         Get
             Return _PositionProperty
         End Get
     End Property
 
-    Private _RotationProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transition)
-                                                                   Me.Rotation = Transition.Value
-                                                               End Sub)
+    Private _RotationProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transition)
+                                                                Me.Rotation = Transition.Value
+                                                            End Sub)
     Public ReadOnly Property RotationProperty As TransitionProperty
         Get
             Return _RotationProperty
         End Get
     End Property
-   
-    Public Property zIndex As Integer = 0
+
+    Private _zIndex As Integer = 0
+    Public Property zIndex As Integer
+        Get
+            Return _zIndex
+        End Get
+        Set(value As Integer)
+            ' To-Do: Change so that zIndex is changed in the scene rather than the inside the game object itself
+            _zIndex = value
+        End Set
+    End Property
     Public Property Visible As Boolean = True
+
+    Public Sub Pause()
+        ' Dim Container As GameContainer = GameContainer.Instance()
+        ' To-Do: Change so that transitions are kept in the Scene, and all game objects, but updated from the scene/GameContainer?
+        'Container.currentScene.remove()
+        _PauseTransitions = True
+    End Sub
+
+    Public Sub [Resume]()
+        _PauseTransitions = False
+    End Sub
+
     Public Sub Show()
         Visible = True
     End Sub
+
     Public Sub Hide()
         Visible = False
     End Sub
+
     Public Sub New()
 
     End Sub
