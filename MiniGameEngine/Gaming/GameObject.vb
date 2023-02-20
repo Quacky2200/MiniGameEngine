@@ -60,7 +60,9 @@ Public MustInherit Class GameObject
     Public Sub AddTransition(ByRef TransitionProperty As TransitionProperty, Transition As Transition, Optional AutomaticallyRemoveTransition As Boolean = False, Optional AutomaticallyRemoveObject As Boolean = False)
         SyncLock Transitions
             Dim item As New TransitionPropertyItem(TransitionProperty, Transition, AutomaticallyRemoveTransition, AutomaticallyRemoveObject)
-            Transitions.Add(item.GetId(), item)
+            If Not Transitions.ContainsKey(item.GetId()) Then
+                Transitions.Add(item.GetId(), item)
+            End If
         End SyncLock
     End Sub
 
@@ -89,12 +91,12 @@ Public MustInherit Class GameObject
     End Sub
 
     Public Overridable Sub Render(Graphics As Graphics)
-        UpdateTransitions()
-        ' Transitions.Access(AddressOf UpdateTransitions)
         ' Derived objects must call Mybase.Render(Graphics) for transitions to update
     End Sub
 
-    Private Sub UpdateTransitions()
+    Public Sub UpdateTransitions()
+        ' UpdateTransitions()
+        ' Transitions.Access(AddressOf UpdateTransitions)
         Dim Bin As New List(Of String)
         For Each KVP In Transitions
             Dim Item = KVP.Value

@@ -7,6 +7,8 @@ Namespace Examples.Shapes
     Public Class SineCircle
         Inherits Circle
 
+        Public Property ShowMidPoint As Boolean = False
+
         Public Sub New(Position As Point, Radius As Double, Frequency As Integer, Depth As Integer)
             MyBase.New(Position, Radius)
             Me.radius = CInt(Radius)
@@ -95,6 +97,10 @@ Namespace Examples.Shapes
 
         Public Property Closed As Boolean = True
         Public Overrides Sub Render(Graphics As Graphics)
+            If ShowMidPoint Then
+                MyBase.Render(Graphics)
+            End If
+
             If Closed Then
                 Graphics.DrawClosedCurve(New Pen(LineColor, LineWidth), Me.getPath())
                 Graphics.FillClosedCurve(New SolidBrush(FillColor), Me.getPath())

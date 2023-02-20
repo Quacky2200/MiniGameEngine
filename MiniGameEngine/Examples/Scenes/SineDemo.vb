@@ -58,7 +58,8 @@ Namespace Examples.Scenes
             .Position = Game.MIDDLE_POS,
             .HorizontalAlignment = UI.HorizontalAlignment.Center,
             .VerticalAlignment = UI.VerticalAlignment.Center,
-            .Visible = False
+            .Visible = False,
+            .zIndex = 99
         }
 
         'Text Transition
@@ -215,22 +216,29 @@ Namespace Examples.Scenes
                 'Toggle the background color on right mouse button click
                 BackgroundColor = If(BackgroundColor = Color.White, Color.Black, Color.White)
             ElseIf MouseButton = MouseButtons.Left Then
-                'Toggle pause on the left mouse button click
-                Paused = Not Paused
-            ElseIf MouseButton = MouseButtons.Middle Then
                 'Advance to the next sine type
                 AdvanceSineType()
             End If
         End Sub
 
-        Public Overrides Sub MouseDoubleClick(MouseButton As MouseButtons)
+        Public Overrides Sub KeyDown(KeyCode As Keys)
+            ' MyBase.KeyDown(KeyCode)
             'Change window fullscreen mode for double click on left mouse button
-            If MouseButton = MouseButtons.Left Then
+            If KeyCode = Keys.F11 Then
                 Game.Fullscreen = If(Game.Fullscreen, False, True)
                 Position.maxPosition = MaxTransitionalPosition
                 Radius.maxDouble = MaxTransitionalRadius
                 PausedInformation.Position = Game.MIDDLE_POS
                 FullScreenInformation.Position = New Point(Game.BOTTOM_MIDDLE_POS.X, Game.BOTTOM_MIDDLE_POS.Y - 100)
+            End If
+
+            If KeyCode = Keys.F5 Then
+                Sine.ShowMidPoint = Not Sine.ShowMidPoint
+            End If
+
+            If KeyCode = Keys.Space Then
+                'Toggle pause on the left mouse button click
+                Paused = Not Paused
             End If
         End Sub
 #End Region

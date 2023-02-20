@@ -8,7 +8,6 @@ Namespace Examples.Scenes
     Public Class RaindropDemo
         Inherits Scene
 
-        Public Property MaxRaindrops As Integer = 500
         Public Property MaxRadius As Integer = 125
         Public Property MinRadius As Integer = 20
 
@@ -22,15 +21,6 @@ Namespace Examples.Scenes
             .zIndex = 99
         }
 
-        Private WeatherInformation2 As New TextElement("Current Chance") With {
-            .Font = New Font("consolas", 15),
-            .Position = New Point(Game.MIDDLE_POS.X, Game.MIDDLE_POS.Y + 25),
-            .HorizontalAlignment = UI.HorizontalAlignment.Center,
-            .VerticalAlignment = UI.VerticalAlignment.Center,
-            .Color = Color.White,
-            .Visible = True
-        }
-
         'Text Transition
         Private TextColorTransition As New ColorTransition(Color.Red, Color.Blue) With {
             .Duration = TimeSpan.FromSeconds(5),
@@ -39,13 +29,6 @@ Namespace Examples.Scenes
             .ReverseUsesDuration = True,
             .Enabled = True
         }
-
-        'Private PausedTextColorTransition As New ColorTransition(Color.Black, Color.White) With {
-        '    .Repeat = True,
-        '    .Reverse = True,
-        '    .Enabled = True,
-        '    .Duration = TimeSpan.FromMilliseconds(100)
-        '}
 
         Enum WeatherChance As UShort
             Drizzle = 7
@@ -65,7 +48,6 @@ Namespace Examples.Scenes
 
         Public Overrides Sub Init()
             AddGameObject(WeatherInformation)
-            'AddGameObject(WeatherInformation2)
             UpdateText()
         End Sub
 
@@ -78,8 +60,6 @@ Namespace Examples.Scenes
             If AsTimespan.Milliseconds < 50 Then Return
 
             Dim Chance = Random.Next(0, 256)
-
-            'WeatherInformation2.Text = String.Format("Current Chance {0} ({1}, {2})", Chance, Weather + 0, Chance & Weather)
 
             If (Chance And Weather) = Weather Then
                 Cloud.DropletRadius = Random.Next(20, 100)

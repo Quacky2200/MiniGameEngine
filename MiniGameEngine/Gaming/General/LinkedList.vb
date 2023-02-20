@@ -12,7 +12,7 @@ End Class
 Public Class LinkedList(Of T)
     Private ReadOnly AddPool As New HashSet(Of T)
     Private ReadOnly RemovePool As New HashSet(Of T)
-    Private Property Begin As Node(Of T) = Nothing
+    Private Begin As Node(Of T) = Nothing
 
     Public Sub Add(Value As T)
         SyncLock AddPool

@@ -79,6 +79,7 @@ Partial Public MustInherit Class Scene
     Private Sub _RenderGameObjects(g As Graphics)
         For Each Obj As GameObject In GameObjects
             If Not (Not IsNothing(Obj) AndAlso Obj.Visible) Then Continue For
+            Obj.UpdateTransitions()
             Obj.Render(g)
         Next
     End Sub

@@ -87,7 +87,6 @@
     <Compile Include="Examples\Scenes\SineDemo.vb" />
     <Compile Include="Gaming\General\LinkedList.vb" />
     <Compile Include="Gaming\General\ModifiableList.vb" />
-    <Compile Include="Gaming\General\OrderedSet.vb" />
     <Compile Include="Gaming\General\Threading\ThreadWork.vb" />
     <Compile Include="Gaming\GameContainer.vb" />
     <Compile Include="Gaming\GameObject.vb" />
