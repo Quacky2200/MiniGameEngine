@@ -10,7 +10,7 @@ Public Class ModifiableList(Of T)
 
     Private ReadOnly CallSpawner As New CachedCallSpawner(Of List(Of T))(Collection)
 
-    Private ReadOnly Pool As New LinkedList(Of CachedCall)
+    Private ReadOnly Pool As New Stack(Of CachedCall)
 
     Public Sub Access(Action As Action(Of ModifiableList(Of T)))
         SyncLock Collection
@@ -18,10 +18,15 @@ Public Class ModifiableList(Of T)
             Action(Me)
 
             SyncLock Pool
-                Pool.Each(Sub(O)
-                              O.Call()
-                              Pool.Remove(O)
-                          End Sub)
+                Dim Count = Pool.Count - 1
+                For i = 0 To Count
+                    Dim Operation = Pool.Pop()
+                    Operation.Call()
+                Next
+                'Pool.Each(Sub(O)
+                '              O.Call()
+                '              Pool.Remove(O)
+                '          End Sub)
             End SyncLock
         End SyncLock
     End Sub
@@ -32,7 +37,7 @@ Public Class ModifiableList(Of T)
         Dim Operation = New CachedCall(Sub()
                                            Collection.Sort(New GenericComparer(Of T)(F))
                                        End Sub)
-        Pool.Add(Operation)
+        Pool.Push(Operation)
     End Sub
 
 
@@ -42,7 +47,7 @@ Public Class ModifiableList(Of T)
         End Get
         Set(value As T)
             Dim Operation = New CachedCall(CallSpawner.Reflect.SetPropertyCalled("Item", value.GetType(), New Type() {GetType(Integer)}), {index, value})
-            Pool.Add(Operation)
+            Pool.Push(Operation)
             'Collection(index) = value
         End Set
     End Property
@@ -61,22 +66,22 @@ Public Class ModifiableList(Of T)
 
     Public Sub Insert(index As Integer, item As T) Implements IList(Of T).Insert
         Dim Operation = CallSpawner.ByMethodName(MethodBase.GetCurrentMethod().Name, {index, item})
-        Pool.Add(Operation)
+        Pool.Push(Operation)
     End Sub
 
     Public Sub RemoveAt(index As Integer) Implements IList(Of T).RemoveAt
         Dim Operation = CallSpawner.ByMethodName(MethodBase.GetCurrentMethod().Name, {index})
-        Pool.Add(Operation)
+        Pool.Push(Operation)
     End Sub
 
     Public Sub Add(item As T) Implements ICollection(Of T).Add
         Dim Operation = CallSpawner.ByMethodName(MethodBase.GetCurrentMethod().Name, {item})
-        Pool.Add(Operation)
+        Pool.Push(Operation)
     End Sub
 
     Public Sub Clear() Implements ICollection(Of T).Clear
         Dim Operation = CallSpawner.ByMethodName(MethodBase.GetCurrentMethod().Name)
-        Pool.Add(Operation)
+        Pool.Push(Operation)
     End Sub
 
     Public Sub CopyTo(array() As T, arrayIndex As Integer) Implements ICollection(Of T).CopyTo
@@ -93,7 +98,7 @@ Public Class ModifiableList(Of T)
 
     Public Function Remove(item As T) As Boolean Implements ICollection(Of T).Remove
         Dim Operation = CallSpawner.ByMethodName(MethodBase.GetCurrentMethod().Name, {item})
-        Pool.Add(Operation)
+        Pool.Push(Operation)
         Return True ' Call without pooling if you wish to guarantee removal.
     End Function
 

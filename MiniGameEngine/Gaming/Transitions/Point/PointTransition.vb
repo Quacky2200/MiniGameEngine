@@ -5,8 +5,12 @@ Namespace Transitions
         Public Sub New(A As Point, B As Point)
             MyBase.New(A, B)
         End Sub
-        Public Sub New(StartPosition As Point, A As Point, B As Point, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = False)
+        Public Sub New(StartPosition As Point, A As Point, B As Point, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = True)
             MyBase.New(StartPosition, A, B, Duration, Enabled)
+        End Sub
+
+        Public Sub New(A As Point, B As Point, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = True)
+            MyBase.New(A, A, B, Duration, Enabled)
         End Sub
         Public Overrides Function ConvertFromRaw(rawValues() As Double) As Object
             Return New Point(CInt(rawValues(0)), CInt(rawValues(1)))

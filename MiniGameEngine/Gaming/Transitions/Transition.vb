@@ -100,10 +100,10 @@
                 Return _Enabled
             End Get
             Set(value As Boolean)
-                'If value Then
-                '    startTick = Now.Ticks()
-                '    Evaluate()
-                'End If
+                If value Then
+                    startTick = Now.Ticks()
+                    Evaluate()
+                End If
                 _Enabled = value
             End Set
         End Property
@@ -226,7 +226,7 @@
         ''' <remarks></remarks>
         Public ReadOnly Property Value As Object
             Get
-                If startTick = 0 Then startTick = Now.Ticks()
+                'If startTick = 0 Then startTick = Now.Ticks()
 
                 Dim difference As Long = GetDifference()
                 Dim v As Double = difference / (If(ReverseUsesDuration And Reverse, Duration.Ticks / 2, Duration.Ticks))
@@ -247,7 +247,7 @@
                         swapDirections()
                     End If
                     Evaluate()
-                    startTick = 0
+                    startTick = Now.Ticks() ' 0
                 End If
                 Return lastValue
             End Get

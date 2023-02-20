@@ -73,9 +73,6 @@ Public Class GameContainer
     Public Sub New(Window As Form)
         Me.Window = Window
         _Input = New Input(Me)
-        LastFormBorderStyle = Me.Window.FormBorderStyle
-        LastSize = Me.Window.Size
-        LastPosition = Me.Window.Location
 
         Me.cursorPosition = Me.Window.RectangleToScreen(New Rectangle(Me.MIDDLE_POS, Me.Window.Size)).Location
 
@@ -147,21 +144,6 @@ Public Class GameContainer
         Scenes.Clear()
         _Input = Nothing
         _CurrentScene = Nothing
-    End Sub
-
-    Public Sub Me_SizeChanged(sender As Object, e As EventArgs) Handles Window.SizeChanged
-        If _Window.Width < My.Computer.Screen.WorkingArea.Width Then
-            LastSize.Width = _Window.Width
-        End If
-        If _Window.Height < My.Computer.Screen.WorkingArea.Height Then
-            LastSize.Height = _Window.Height
-        End If
-    End Sub
-
-    Public Sub Me_LocationChanged(sender As Object, e As EventArgs) Handles Window.LocationChanged
-        If _Window.Width < My.Computer.Screen.WorkingArea.Width AndAlso _Window.Height < My.Computer.Screen.WorkingArea.Height Then
-            LastPosition = Me.Window.Location
-        End If
     End Sub
 
 #End Region
@@ -350,8 +332,6 @@ Public Class GameContainer
 #End Region
 
 #Region "Window Properties"
-    Private LastSize As Size
-    Private LastPosition As Point
     Private LastFormBorderStyle As System.Windows.Forms.FormBorderStyle
     Public Overloads Property Location As Point
         Get
@@ -363,25 +343,27 @@ Public Class GameContainer
     End Property
     Public Overloads Property Width As Integer
         Get
-            Return Window.Width
+            If Window.WindowState = FormWindowState.Minimized Then
+                Return Window.RestoreBounds.Width
+            Else
+                Return Window.Width
+            End If
         End Get
         Set(value As Integer)
             Window.Width = value
-            If value < My.Computer.Screen.WorkingArea.Width Then
-                LastSize.Width = value
-            End If
         End Set
     End Property
 
     Public Overloads Property Height As Integer
         Get
-            Return Window.Height
+            If Window.WindowState = FormWindowState.Minimized Then
+                Return Window.RestoreBounds.Height
+            Else
+                Return Window.Height
+            End If
         End Get
         Set(value As Integer)
             Window.Height = value
-            If value < My.Computer.Screen.WorkingArea.Height Then
-                LastSize.Height = value
-            End If
         End Set
     End Property
 
@@ -391,9 +373,6 @@ Public Class GameContainer
         End Get
         Set(value As Windows.Forms.FormBorderStyle)
             Window.FormBorderStyle = value
-            If value <> Windows.Forms.FormBorderStyle.None Then
-                LastFormBorderStyle = value
-            End If
         End Set
     End Property
 
@@ -421,6 +400,7 @@ Public Class GameContainer
                     If Screen.Bounds.IntersectsWith(WinRect) Then
                         CachedNonFullscreenSize = New Size(Width, Height)
                         CachedNonFullscreenPosition = New Point(Window.Left, Window.Top)
+                        LastFormBorderStyle = FormBorderStyle
                         FormBorderStyle = Windows.Forms.FormBorderStyle.None
                         Window.Left = Screen.Bounds.Left
                         Window.Top = Screen.Bounds.Top

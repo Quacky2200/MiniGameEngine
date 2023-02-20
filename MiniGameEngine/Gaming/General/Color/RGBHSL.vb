@@ -65,7 +65,7 @@ Namespace General.Color
         '/ <param name="c">Original colour</param>
         '/ <param name="brightness">The luminance level to impose</param>
         '/ <returns>an adjusted colour</returns>
-        Public Shared Function SetBrightness(c As Drawing.Color, brightness As Double) As Drawing.Color
+        Public Shared Function SetBrightness(ByVal c As Drawing.Color, brightness As Double) As Drawing.Color
             Dim hsl As HSL = RGB_to_HSL(c)
             hsl.L = brightness
             Return HSL_to_RGB(hsl)
@@ -81,7 +81,7 @@ Namespace General.Color
         '/ <param name="c">The original colour</param>
         '/ <param name="brightness">The luminance delta</param>
         '/ <returns>An adjusted colour</returns>
-        Public Shared Function ModifyBrightness(c As Drawing.Color, brightness As Double) As Drawing.Color
+        Public Shared Function ModifyBrightness(ByVal c As Drawing.Color, brightness As Double) As Drawing.Color
             Dim hsl As HSL = RGB_to_HSL(c)
             hsl.L *= brightness
             Return HSL_to_RGB(hsl)
@@ -95,7 +95,7 @@ Namespace General.Color
         '/ <param name="c">An original colour</param>
         '/ <param name="Saturation">The saturation value to impose</param>
         '/ <returns>An adjusted colour</returns>
-        Public Shared Function SetSaturation(c As Drawing.Color, Saturation As Double) As Drawing.Color
+        Public Shared Function SetSaturation(ByVal c As Drawing.Color, Saturation As Double) As Drawing.Color
             Dim hsl As HSL = RGB_to_HSL(c)
             hsl.S = Saturation
             Return HSL_to_RGB(hsl)
@@ -111,7 +111,7 @@ Namespace General.Color
         '/ <param name="c">The original colour</param>
         '/ <param name="Saturation">The saturation delta</param>
         '/ <returns>An adjusted colour</returns>
-        Public Shared Function ModifySaturation(c As Drawing.Color, Saturation As Double) As Drawing.Color
+        Public Shared Function ModifySaturation(ByVal c As Drawing.Color, Saturation As Double) As Drawing.Color
             Dim hsl As HSL = RGB_to_HSL(c)
             hsl.S *= Saturation
             Return HSL_to_RGB(hsl)
@@ -125,7 +125,7 @@ Namespace General.Color
         '/ <param name="c">An original colour</param>
         '/ <param name="Hue">The Hue value to impose</param>
         '/ <returns>An adjusted colour</returns>
-        Public Shared Function SetHue(c As Drawing.Color, Hue As Double) As Drawing.Color
+        Public Shared Function SetHue(ByVal c As Drawing.Color, Hue As Double) As Drawing.Color
             Dim hsl As HSL = RGB_to_HSL(c)
             hsl.H = Hue
             Return HSL_to_RGB(hsl)
@@ -141,7 +141,7 @@ Namespace General.Color
         '/ <param name="c">The original colour</param>
         '/ <param name="Hue">The Hue delta</param>
         '/ <returns>An adjusted colour</returns>
-        Public Shared Function ModifyHue(c As Drawing.Color, Hue As Double) As Drawing.Color
+        Public Shared Function ModifyHue(ByVal c As Drawing.Color, Hue As Double) As Drawing.Color
             Dim hsl As HSL = RGB_to_HSL(c)
             hsl.H *= Hue
             Return HSL_to_RGB(hsl)
@@ -208,7 +208,7 @@ Namespace General.Color
         '/ <remarks>Takes advantage of whats already built in to .NET by using the Color.GetHue, Color.GetSaturation and Color.GetBrightness methods</remarks>
         '/ <param name="c">A Color to convert</param>
         '/ <returns>An HSL value</returns>
-        Public Shared Function RGB_to_HSL(c As Drawing.Color) As HSL
+        Public Shared Function RGB_to_HSL(ByVal c As Drawing.Color) As HSL
             Dim hsl As New HSL()
 
             hsl.H = c.GetHue() / 360.0 ' we store hue as 0-1 as opposed to 0-360

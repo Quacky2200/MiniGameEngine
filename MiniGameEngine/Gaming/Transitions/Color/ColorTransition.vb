@@ -5,8 +5,12 @@ Namespace Transitions
         Public Sub New(A As Color, B As Color)
             MyBase.New(A, B)
         End Sub
-        Public Sub New(StartPosition As Color, A As Color, B As Color, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = False)
+        Public Sub New(StartPosition As Color, A As Color, B As Color, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = True)
             MyBase.New(StartPosition, A, B, Duration, Enabled)
+        End Sub
+
+        Public Sub New(A As Color, B As Color, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = True)
+            MyBase.New(A, A, B, Duration, Enabled)
         End Sub
         Public Overrides Function ConvertFromRaw(rawValues() As Double) As Object
             Dim a As Byte = CByte(Math.Min(255, Math.Max(0, rawValues(0))))

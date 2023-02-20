@@ -37,7 +37,7 @@ Namespace Examples.Scenes
         End Property
 
         'Music
-        Private MP3Path As String = My.Computer.FileSystem.SpecialDirectories.Temp & "\temp.mp3"
+        Private MP3Path As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "temp.mp3")
         Private WMPObject As New WMPLib.WindowsMediaPlayer()
 
         'Information
@@ -222,7 +222,6 @@ Namespace Examples.Scenes
         End Sub
 
         Public Overrides Sub KeyDown(KeyCode As Keys)
-            ' MyBase.KeyDown(KeyCode)
             'Change window fullscreen mode for double click on left mouse button
             If KeyCode = Keys.F11 Then
                 Game.Fullscreen = If(Game.Fullscreen, False, True)
@@ -255,7 +254,9 @@ Namespace Examples.Scenes
 #End Region
 
         Public Overrides Sub ExitGame()
+            MyBase.ExitGame()
             WMPObject.controls.stop()
+            IO.File.Delete(MP3Path)
         End Sub
     End Class
 End Namespace

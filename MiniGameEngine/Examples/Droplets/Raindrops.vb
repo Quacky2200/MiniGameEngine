@@ -1,4 +1,7 @@
 ﻿Imports MiniGameEngine.Transitions
+Imports MiniGameEngine.General.Color
+Imports System.Drawing
+
 Namespace Examples.Droplets
     Public Class Raindrops
         Inherits Waterdrops
@@ -6,15 +9,19 @@ Namespace Examples.Droplets
             MyBase.New(Scene)
         End Sub
 
-        Friend Overloads Overrides Sub Spawn(ByVal i As Integer, ByRef CurrentCircle As Shapes.Circle)
+        Friend Overloads Overrides Sub Spawn(ByVal i As Integer, ByRef Circle As Shapes.Circle)
             Dim DissipationRate As Double = 150 * (Math.Max(DropletRadius, 100) / 100)
-            Dim CircleDissipate As New Transitions.ColorTransition(DropletColor, DropletFadeColor) With {
-                .Enabled = True, .Duration = TimeSpan.FromTicks(MovementDuration.Ticks + TimeSpan.FromMilliseconds(DissipationRate * i).Ticks)
-            }
-            Dim CircleMovement As New DoubleTransition(0, 0, DropletRadius, TimeSpan.FromTicks(MovementDuration.Ticks + TimeSpan.FromMilliseconds(DissipationRate * i).Ticks), True)
-            Dim Circle As Shapes.Circle = CurrentCircle
-            Circle.AddTransition(Circle.RadiusProperty, CircleMovement, True, False)
-            Circle.AddTransition(Circle.ColorProperty, CircleDissipate, True, True)
+            Dim DissipationDuration As TimeSpan = MovementDuration + TimeSpan.FromMilliseconds(DissipationRate * i)
+            Dim DissipateColor = RGBHSL.ModifyBrightness(DropletColor, (DropletCount - i) / DropletCount)
+
+            Dim DissipationDisperseTransition As New DoubleTransition(0, DropletRadius, DissipationDuration, True)
+            Dim DissipateFadeTransition = New ColorTransition(DissipateColor, ColorTools.ModifyAlpha(DissipateColor, 0), DissipationDuration)
+
+            Circle.zIndex = i
+            Circle.LineColor = Color.Transparent
+
+            Circle.AddTransition(Circle.RadiusProperty, DissipationDisperseTransition, True, False)
+            Circle.AddTransition(Circle.FillProperty, DissipateFadeTransition, True, True)
         End Sub
     End Class
 End Namespace

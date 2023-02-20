@@ -1,6 +1,5 @@
 ﻿Imports System.Drawing
-Imports MiniGameEngine.General.Color.RGBHSL
-Imports MiniGameEngine.Transitions
+
 Namespace Examples.Droplets
     Partial Public MustInherit Class Droplets
         Friend Property Scene As Scene
