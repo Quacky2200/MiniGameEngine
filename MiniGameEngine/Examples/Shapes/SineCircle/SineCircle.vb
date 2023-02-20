@@ -16,18 +16,18 @@ Namespace Examples.Shapes
         End Sub
 
 #Region "Transition Properties"
-        Private _FrequencyProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transition)
-                                                                     Me.frequency = CInt(Transition.Value)
-                                                                 End Sub)
+        Private _FrequencyProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transition)
+                                                                        Me.frequency = CInt(Transition.Value)
+                                                                    End Sub)
         Public ReadOnly Property FrequencyProperty As TransitionProperty
             Get
                 Return _FrequencyProperty
             End Get
         End Property
 
-        Private _DepthProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transition)
-                                                                 Me.depth = CInt(Transition.Value)
-                                                             End Sub)
+        Private _DepthProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transition)
+                                                                    Me.depth = CInt(Transition.Value)
+                                                                End Sub)
         Public ReadOnly Property DepthProperty As TransitionProperty
             Get
                 Return _DepthProperty
@@ -38,8 +38,15 @@ Namespace Examples.Shapes
 
 #Region "General Properties"
 
-        Public Overloads Function toString() As String
-            Return String.Format("Position:{0},Rotation {1},Radius:{2:N2},Frequency:{3},Depth:{4},Type:{5}", Position, Me.Rotation, radius, frequency, depth, type.GetType.Name)
+        Public Overloads Function ToString() As String
+            Return MyBase.ToString() + " " + GetStatistics()
+        End Function
+
+        Public Function GetStatistics() As String
+            Return String.Format(
+                "Position:{0},Rotation:{1},Radius:{2},Frequency:{3},Depth:{4},Type:{5}",
+                Position, Rotation.ToString("000.00"), Radius.ToString("000.00"), frequency, depth, type.GetType.Name
+            )
         End Function
 #End Region
 
@@ -89,10 +96,10 @@ Namespace Examples.Shapes
         Public Property Closed As Boolean = True
         Public Overrides Sub Render(Graphics As Graphics)
             If Closed Then
-                Graphics.FillClosedCurve(New SolidBrush(fillColor), Me.getPath())
-                Graphics.DrawClosedCurve(New Pen(lineColor, lineWidth), Me.getPath())
+                Graphics.DrawClosedCurve(New Pen(LineColor, LineWidth), Me.getPath())
+                Graphics.FillClosedCurve(New SolidBrush(FillColor), Me.getPath())
             Else
-                Graphics.DrawCurve(New Pen(lineColor, lineWidth), Me.getPath())
+                Graphics.DrawCurve(New Pen(LineColor, LineWidth), Me.getPath())
             End If
         End Sub
         Public Overloads Function getPath() As PointF()

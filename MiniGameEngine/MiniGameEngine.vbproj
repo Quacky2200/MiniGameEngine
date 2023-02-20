@@ -10,7 +10,8 @@
     <AssemblyName>MiniGameEngine</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,10 +44,6 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -69,7 +66,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Examples\Droplets\Droplet.vb" />
-    <Compile Include="Examples\Droplets\SmoothEchoDroplets.vb" />
     <Compile Include="Examples\Droplets\SimpleEchoDroplets.vb" />
     <Compile Include="Examples\Droplets\Waterdrops.vb" />
     <Compile Include="Examples\Droplets\Raindrops.vb" />
@@ -89,10 +85,19 @@
     <Compile Include="Gaming\General\Color\RGBHSL.vb" />
     <Compile Include="Gaming\General\Color\SimilarColor.vb" />
     <Compile Include="Examples\Scenes\SineDemo.vb" />
+    <Compile Include="Gaming\General\LinkedList.vb" />
+    <Compile Include="Gaming\General\ModifiableList.vb" />
+    <Compile Include="Gaming\General\OrderedSet.vb" />
     <Compile Include="Gaming\General\Threading\ThreadWork.vb" />
     <Compile Include="Gaming\GameContainer.vb" />
     <Compile Include="Gaming\GameObject.vb" />
+    <Compile Include="Gaming\Generics\GenericComparer.vb" />
+    <Compile Include="Gaming\Reflection\CachedCall.vb" />
+    <Compile Include="Gaming\Reflection\CachedCallSpawner.vb" />
+    <Compile Include="Gaming\Reflection\CachedReflector.vb" />
+    <Compile Include="Gaming\Sprite.vb" />
     <Compile Include="Gaming\Transitions\TransitionPropertyItem.vb" />
+    <Compile Include="Gaming\UI\LazyText.vb" />
     <Compile Include="Gaming\UI\TextEditElement.vb" />
     <Compile Include="Gaming\UI\TextElement.vb" />
     <Compile Include="Gaming\Input.vb" />
@@ -114,6 +119,7 @@
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="My Project\Resources.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -144,7 +150,6 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="WMPLib">

@@ -6,10 +6,10 @@ Namespace Examples.Droplets
             MyBase.New(Scene)
         End Sub
 
-        Friend Overloads Overrides Sub Spawn(ByVal i As Integer, ByRef currentCircle As Shapes.Circle)
-            Dim currentMovement As New DoubleTransition(0, 0, 100, MovementDuration, True)
-            Dim circle As Shapes.Circle = currentCircle
-            Scene.add(circle.RadiusProperty, currentMovement, True, True)
+        Friend Overloads Overrides Sub Spawn(ByVal i As Integer, ByRef CurrentCircle As Shapes.Circle)
+            Dim CircleMovement As New DoubleTransition(0, 0, 100, MovementDuration, True)
+            Dim Circle As Shapes.Circle = CurrentCircle
+            Circle.AddTransition(Circle.RadiusProperty, CircleMovement, True, True)
             Threading.Thread.Sleep(100)
         End Sub
     End Class

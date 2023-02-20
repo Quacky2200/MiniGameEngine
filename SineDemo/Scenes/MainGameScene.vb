@@ -6,7 +6,7 @@ Imports MiniGameEngine.UI
 Public Class MainGameScene
     Inherits Scene
 
-#Region "Click Msgs"
+#Region ""
 
     Private ClickToBeginMsg As New TextElement("Click to Begin") With {
     .Color = Color.White,
@@ -23,6 +23,12 @@ Public Class MainGameScene
 
 #End Region
 
+
+
+
+
+
+
     Const PAUSE_MESSAGE As String = "[PAUSED] - Press Escape again to Quit, or Click to Continue."
     ' Const BEGIN_MESSAGE As String = "Click to Begin"
 
@@ -30,9 +36,9 @@ Public Class MainGameScene
     ' Private lastDelta As Double = 0
     ' Private lastMousePosition As Point
     'Private MyFont As New System.Drawing.Font("consolas", 15) '("KOMIKA AXIS"
-    Private MyMessage As String = PAUSE_MESSAGE
+    'Private MyMessage As String = BEGIN_MESSAGE
 
-    'Dim Circle As New SineCircle(CharacterPosition, Game.Width / 10, 10, 20)
+    Dim Circle As New SineCircle(CharacterPosition, Game.Width / 10, 10, 20)
     'Private Color As New ColorStepTransition(System.Drawing.Color.FromArgb(0, 250, 250, 250), Color.White) With {.repeat = True, .speed = 550}
     Private Ready As Boolean = False
     Private Begin As Boolean = False
@@ -59,10 +65,11 @@ Public Class MainGameScene
         '    ))
         'Next
         'Add 
-        add(ClickToBeginMsg)
+        AddGameObject(ClickToBeginMsg)
         'Game.addTransition(ClickToBeginMsg.ColorProperty, ClickToBeginMsgColorTransition)
     End Sub
     Public Overrides Sub Render(g As Graphics)
+        MyBase.Render(g)
         ' Dim Path As PointF() = Circle.getSinePath(10, 20).PathPoints
         'g.DrawClosedCurve(New Pen(New SolidBrush(BadBacteriaTransition.Outline.value), 5), Path)
         ' g.FillClosedCurve(New SolidBrush(BadBacteriaTransition.Fill.value), Path)
@@ -73,24 +80,24 @@ Public Class MainGameScene
         'g.FillClosedCurve(New SolidBrush(Color.LawnGreen), Path2)
     End Sub
     Public Overrides Sub KeyDown(KeyCode As Keys)
-        Select Case KeyCode
-            Case Keys.Escape
-                If MyMessage = PAUSE_MESSAGE And Begin And Not Ready Then
-                    End
-                ElseIf MyMessage <> PAUSE_MESSAGE And MyMessage = "" And Begin Then
-                    Ready = False
-                    ' colorFade1.Reverse = False
-                    ' colorFade1.ReverseDirection()
-                    ' colorFade1.Start()
-                    MyMessage = PAUSE_MESSAGE
-                End If
-            Case Keys.Tab
-                If MyMessage = PAUSE_MESSAGE And Begin And Not Ready Then
-                    goToDemo = True
-                End If
-            Case Else
-                Debug.WriteLine(KeyCode.ToString)
-        End Select
+        'Select Case KeyCode
+        '    Case Keys.Escape
+        '        If MyMessage = PAUSE_MESSAGE And Begin And Not Ready Then
+        '            End
+        '        ElseIf MyMessage <> PAUSE_MESSAGE And MyMessage = "" And Begin Then
+        '            Ready = False
+        '            ' colorFade1.Reverse = False
+        '            ' colorFade1.ReverseDirection()
+        '            ' colorFade1.Start()
+        '            MyMessage = PAUSE_MESSAGE
+        '        End If
+        '    Case Keys.Tab
+        '        If MyMessage = PAUSE_MESSAGE And Begin And Not Ready Then
+        '            goToDemo = True
+        '        End If
+        '    Case Else
+        '        Debug.WriteLine(KeyCode.ToString)
+        'End Select
     End Sub
     Public Overrides Sub MouseMove(Location As Point)
         'lastMousePosition = Location
@@ -109,10 +116,11 @@ Public Class MainGameScene
         Begin = True
         Ready = True
     End Sub
-    Public Overrides Sub Update(delta As Double)
+    Public Overloads Sub Update(delta As Double)
+        MyBase.Update(delta)
         'BadBacteriaTransition.updateAll(delta)
         If goToDemo Then
-            Game.switchScenes(Of Examples.Scenes.SineDemo)()
+            Game.SwitchScenes(Of Examples.Scenes.SineDemo)()
         End If
         ' lastDelta = delta
 

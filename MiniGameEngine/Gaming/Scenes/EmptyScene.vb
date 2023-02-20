@@ -20,15 +20,7 @@ Public Class EmptyScene
         MyBase.New(game)
     End Sub
     Public Overrides Sub Init()
-        add(WelcomeMessage)
-        add(Instructions)
-    End Sub
-
-    Public Overrides Sub Render(g As Graphics)
-
-    End Sub
-
-    Public Overrides Sub Update(delta As Double)
-
+        AddGameObject(WelcomeMessage)
+        AddGameObject(Instructions)
     End Sub
 End Class

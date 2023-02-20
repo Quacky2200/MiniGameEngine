@@ -13,35 +13,35 @@ Namespace UI
         Public Property BorderWidth As Integer = 0
 
 #Region "Transition Properties"
-        Private _ColorProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transitions.ColorTransition)
-                                                                 Me.Color = Transition.Value
-                                                             End Sub)
+        Private _ColorProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.ColorTransition)
+                                                                    Me.Color = Transition.Value
+                                                                End Sub)
         Public ReadOnly Property ColorProperty As TransitionProperty
             Get
                 Return _ColorProperty
             End Get
         End Property
 
-        Private _BackgroundProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transitions.ColorTransition)
-                                                                      Me.Background = Transition.Value
-                                                                  End Sub)
+        Private _BackgroundProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.ColorTransition)
+                                                                         Me.Background = Transition.Value
+                                                                     End Sub)
         Public ReadOnly Property BackgroundProperty As TransitionProperty
             Get
                 Return _BackgroundProperty
             End Get
         End Property
 
-        Private _BorderColorProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transitions.ColorTransition)
-                                                                       Me.BorderColor = Transition.Value
-                                                                   End Sub)
+        Private _BorderColorProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.ColorTransition)
+                                                                          Me.BorderColor = Transition.Value
+                                                                      End Sub)
         Public ReadOnly Property BorderColorProperty As TransitionProperty
             Get
                 Return _BorderColorProperty
             End Get
         End Property
-        Private _BorderWidthProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transitions.DoubleTransition)
-                                                                       Me.BorderWidth = Transition.Value
-                                                                   End Sub)
+        Private _BorderWidthProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.DoubleTransition)
+                                                                          Me.BorderWidth = Transition.Value
+                                                                      End Sub)
         Public ReadOnly Property BorderWidthProperty As TransitionProperty
             Get
                 Return _BorderWidthProperty
@@ -62,7 +62,7 @@ Namespace UI
             Dim width As Integer = 0
             'Get all the sizes and sum the height whilst getting the biggest width
             For Each line In allText
-                Dim tempLineSize As SizeF = Graphics.MeasureString(line, Me.Font)
+                Dim tempLineSize As Size = Graphics.MeasureString(line, Me.Font).ToSize
                 height += tempLineSize.Height
                 If tempLineSize.Width > width Then width = tempLineSize.Width
             Next
@@ -72,28 +72,17 @@ Namespace UI
             Dim horizontalOffset = {0, -0.5, -1}
             Dim verticalOffset = {0, -0.5, -1}
             'Let's make a new position with the offset
-
-            Dim TextPosition As New Point(
-                Me.Position.X + Math.Round(Dimensions.Width * horizontalOffset(Me.HorizontalAlignment), 1),
-                Me.Position.Y + Math.Round(Dimensions.Height * verticalOffset(Me.VerticalAlignment), 1)
-            )
-
-            'Dim TextPosition As Point = Me.Position
-            'TextPosition.Offset(Math.Round(Dimensions.Width * horizontalOffset(Me.HorizontalAlignment), 1), Math.Round(Dimensions.Height * verticalOffset(Me.VerticalAlignment), 1))
+            Dim TextPosition As Point = Me.Position
+            TextPosition.Offset(CInt(Dimensions.Width * horizontalOffset(Me.HorizontalAlignment)), CInt(Dimensions.Height * verticalOffset(Me.VerticalAlignment)))
 
             Graphics.DrawRectangle(New Pen(BorderColor, BorderWidth), New Rectangle(TextPosition, Dimensions))
             Graphics.FillRectangle(New SolidBrush(Background), New Rectangle(TextPosition, Dimensions))
 
             For Each line In allText
                 Graphics.DrawString(line, Me.Font, New SolidBrush(Me.Color), TextPosition)
-                Dim test As Integer = CInt(Graphics.MeasureString(line, Me.Font).Height)
-                TextPosition.Y = TextPosition.Y + test
+                ' Dim test As Integer = CInt(Graphics.MeasureString(line, Me.Font).Height)
                 'TextPosition.Offset(0, test)
             Next
-        End Sub
-
-        Public Overrides Sub Update(delta As Double)
-
         End Sub
     End Class
     Public Enum HorizontalAlignment

@@ -14,9 +14,31 @@ Namespace Examples.Scenes
         Public Sine As New SineCircle(Game.MIDDLE_POS, Game.Height / 3, 40, 40)
 
 #Region "General Properties"
+        Private Property Paused As Boolean
+            Get
+                Return PausedInformation.Visible
+            End Get
+            Set(value As Boolean)
+                If (value) Then
+                    WMPObject.controls.pause()
+                Else
+                    WMPObject.controls.play()
+                End If
+
+                Radius.Paused = value
+                Frequency.Paused = value
+                Depth.Paused = value
+                Position.Paused = value
+                Rotation.Paused = value
+                SineColorTransition.Paused = value
+                PausedInformation.Visible = value
+                TextColorTransition.Paused = value
+            End Set
+        End Property
+
         'Music
-        Private tempMP3 As String = My.Computer.FileSystem.SpecialDirectories.Temp & "\temp.mp3"
-        Private player As New WMPLib.WindowsMediaPlayer()
+        Private MP3Path As String = My.Computer.FileSystem.SpecialDirectories.Temp & "\temp.mp3"
+        Private WMPObject As New WMPLib.WindowsMediaPlayer()
 
         'Information
         Private DebuggingInfomation As New TextElement("") With {
@@ -31,7 +53,7 @@ Namespace Examples.Scenes
             .VerticalAlignment = UI.VerticalAlignment.Center
         }
 
-        Private PausedInformation As New TextElement("Paused!") With {
+        Private PausedInformation As New TextElement("[paused]") With {
             .Font = New Font("consolas", 20),
             .Position = Game.MIDDLE_POS,
             .HorizontalAlignment = UI.HorizontalAlignment.Center,
@@ -51,29 +73,30 @@ Namespace Examples.Scenes
         Private PausedTextColorTransition As New ColorTransition(Color.Black, Color.White) With {
             .Repeat = True,
             .Reverse = True,
-            .ReverseUsesDuration = True,
             .Enabled = True,
-            .Duration = TimeSpan.FromSeconds(1)
+            .Duration = TimeSpan.FromMilliseconds(100)
         }
 
 #End Region
+
 #Region "Sine Circle Types"
-        Private currentSineType As Integer = -1
-        Private circletypes As New Dictionary(Of SineCircleType, Action) From {
-            {New PiSineType(Sine), AddressOf fastSineCirclesTransition}, _
-            {New NormalSineCirclePathType(Sine), AddressOf fastSineCirclesTransition}, _
-            {New DoubleSineCirclePathType(Sine), AddressOf slowSineCirclesTransition}, _
-            {New DoubleCosCirclePathType(Sine), AddressOf slowSineCirclesTransition} _
+        Private CurrentCircle As Integer = -1
+        Private Circles As New Dictionary(Of SineCircleType, Action) From {
+            {New PiSineType(Sine), AddressOf FastSineCirclesTransition},
+            {New NormalSineCirclePathType(Sine), AddressOf FastSineCirclesTransition},
+            {New DoubleSineCirclePathType(Sine), AddressOf SlowSineCirclesTransition},
+            {New DoubleCosCirclePathType(Sine), AddressOf SlowSineCirclesTransition}
         }
 
-        Private Sub slowSineCirclesTransition()
+        Private Sub SlowSineCirclesTransition()
             Radius.Duration = TimeSpan.FromSeconds(10)
             Frequency.Duration = TimeSpan.FromSeconds(10)
             Depth.Duration = TimeSpan.FromSeconds(10)
             Rotation.Duration = TimeSpan.FromSeconds(3)
             Position.Duration = TimeSpan.FromSeconds(4)
         End Sub
-        Private Sub fastSineCirclesTransition()
+
+        Private Sub FastSineCirclesTransition()
             Radius.Duration = TimeSpan.FromSeconds(1)
             Frequency.Duration = TimeSpan.FromSeconds(1)
             Depth.Duration = TimeSpan.FromSeconds(2)
@@ -81,29 +104,28 @@ Namespace Examples.Scenes
             Rotation.Duration = TimeSpan.FromSeconds(1)
         End Sub
 
-        Public Sub advanceSineType()
-            currentSineType = (currentSineType + 1) Mod circletypes.Count
-            ' Lucky Dip for next sine type
+        Public Sub AdvanceSineType()
+            CurrentCircle = (CurrentCircle + 1) Mod Circles.Count
             'Dim dip As Integer = currentSineType
             'While dip = currentSineType
             '    dip = random.Next(0, circletypes.Count)
             'End While
             'currentSineType = dip
-            Dim key = circletypes.Keys.ToArray(currentSineType)
+            Dim key = Circles.Keys.ToArray(CurrentCircle)
             Sine.type = key
-            circletypes(key)()
+            Circles(key)()
         End Sub
 #End Region
 
 #Region "Transitions"
 
-        Public Radius As New RandomDoubleTransition(50, 20, maxTransitionalRadius()) With {.Repeat = True, .Reverse = True, .Enabled = True}
+        Public Radius As New RandomDoubleTransition(50, 20, MaxTransitionalRadius()) With {.Repeat = True, .Reverse = True, .Enabled = True}
 
         Public Frequency As New RandomDoubleTransition(24, 0, 85) With {.Repeat = True, .Reverse = True, .Enabled = True}
 
         Public Depth As New RandomDoubleTransition(25, 0, 80) With {.Repeat = True, .Reverse = True, .Enabled = True}
 
-        Public Position As New RandomPointTransition(Game.MIDDLE_POS, minTransitionalPosition(), maxTransitionalPosition()) With {.Repeat = True, .Reverse = True, .Enabled = True}
+        Public Position As New RandomPointTransition(Game.MIDDLE_POS, MinTransitionalPosition(), MaxTransitionalPosition()) With {.Repeat = True, .Reverse = True, .Enabled = True}
 
         Public Rotation As New RandomDoubleTransition(0, 360) With {.Repeat = True, .Reverse = True, .ReverseUsesDuration = True, .Enabled = True}
 
@@ -111,18 +133,18 @@ Namespace Examples.Scenes
 
 #End Region
 
-#Region "max Properties"
-        Public ReadOnly Property maxTransitionalPosition() As Point
+#Region "Min/Max Properties"
+        Public ReadOnly Property MaxTransitionalPosition() As Point
             Get
                 Return New Point(CInt((Game.Width / 4) * 3), CInt((Game.Height / 4) * 3))
             End Get
         End Property
-        Public ReadOnly Property minTransitionalPosition() As Point
+        Public ReadOnly Property MinTransitionalPosition() As Point
             Get
                 Return New Point(CInt(Game.Width / 4), CInt(Game.Height / 4))
             End Get
         End Property
-        Public ReadOnly Property maxTransitionalRadius() As Double
+        Public ReadOnly Property MaxTransitionalRadius() As Double
             Get
                 Return Game.Height / 3
             End Get
@@ -131,99 +153,73 @@ Namespace Examples.Scenes
 
 #Region "Construction"
 
-        Public Sub New(game As GameContainer)
-            MyBase.New(game)
-            game.AutomaticallyPause = False
+        Public Sub New(Game As GameContainer)
+            MyBase.New(Game)
             BackgroundColor = Color.White
-            Sine.fillColor = Color.Gold
         End Sub
 
         Public Overrides Sub Init()
-            ' Add the sine circle
-            add(Sine)
-            ' Get the first Sine Type and change it
-            advanceSineType()
-            ' Add all of the Sine Circle Transitions
-            add(Sine.RotationProperty, Rotation)
-            add(Sine.PositionProperty, Position)
-            add(Sine.ColorProperty, SineColorTransition)
-            add(Sine.FrequencyProperty, Frequency)
-            add(Sine.DepthProperty, Depth)
-            add(Sine.RadiusProperty, Radius)
+            'Add the sine circle
+            AddGameObject(Sine)
+            'Get the first Sine Type and change it
+            AdvanceSineType()
 
+            'add all of the Sine Circle Transitions
+            Sine.AddTransition(Sine.RotationProperty, Rotation)
+            Sine.AddTransition(Sine.PositionProperty, Position)
+            Sine.AddTransition(Sine.ColorProperty, SineColorTransition)
+            Sine.AddTransition(Sine.FrequencyProperty, Frequency)
+            Sine.AddTransition(Sine.DepthProperty, Depth)
+            Sine.AddTransition(Sine.RadiusProperty, Radius)
 
-            ' Add the debugging information text
-            add(DebuggingInfomation)
-            ' Add the debugging information transition
-            add(DebuggingInfomation.ColorProperty, TextColorTransition)
-            ' Add the fullscreen information text
-            add(FullScreenInformation)
-            ' Add the same debugging transition to fullscreen text
-            add(FullScreenInformation.ColorProperty, TextColorTransition)
+            'Add the debugging information text
+            AddGameObject(DebuggingInfomation)
+            'Add the debugging information transition
+            Sine.AddTransition(DebuggingInfomation.ColorProperty, TextColorTransition)
+            'Add the fullscreen information text
+            AddGameObject(FullScreenInformation)
+            'Add the same debugging transition to fullscreen text
+            FullScreenInformation.AddTransition(FullScreenInformation.ColorProperty, TextColorTransition)
+            'Add paused text
+            AddGameObject(PausedInformation)
+
+            'Add paused transition
+            PausedInformation.AddTransition(PausedInformation.ColorProperty, PausedTextColorTransition)
+
             ' Make an audio stream to open our music
-            Dim audioStream As IO.Stream
-            ' Find the executing assembly and store it
-            Dim _assembly As [Assembly] = [Assembly].GetExecutingAssembly()
-            ' Get the song from the assembly
-            audioStream = _assembly.GetManifestResourceStream("MiniGameEngine.dancin.mp3")
-            ' Create a temporary stream for the music
-            Dim _tempaudioStream As New IO.FileStream(tempMP3, IO.FileMode.Create)
-            ' Store the music somewhere
-            Dim data(CInt(audioStream.Length)) As Byte
-            ' Read the music from the stream into the data byte array variable
-            audioStream.Read(data, 0, CInt(audioStream.Length))
-            ' Write the music to the temporary file using the stream
-            _tempaudioStream.Write(data, 0, CInt(audioStream.Length))
-            ' Close the stream, now ready to be played
-            _tempaudioStream.Close()
-            ' Play the music from temporary file 
-            player.URL = tempMP3
-            player.settings.setMode("loop", True)
-            player.controls.play()
+            Dim AudioStream As IO.Stream
+            'Find the executing assembly and store it
+            Dim ExecutingAssembly As [Assembly] = [Assembly].GetExecutingAssembly()
+            'Get the song from the assembly
+            AudioStream = ExecutingAssembly.GetManifestResourceStream("MiniGameEngine.dancin.mp3")
+            'Create a temporary stream for the music
+            Dim AudioWriteStream As New IO.FileStream(MP3Path, IO.FileMode.Create)
+            'Store the music somewhere
+            Dim AudioBuffer(CInt(AudioStream.Length)) As Byte
+            'Read the music from the stream into the data byte array variable
+            AudioStream.Read(AudioBuffer, 0, CInt(AudioStream.Length))
+            'Write the music to the temporary file using the stream
+            AudioWriteStream.Write(AudioBuffer, 0, CInt(AudioStream.Length))
+            'Close the stream, now ready to be played
+            AudioWriteStream.Close()
+            'Play the music from temporary file 
+            WMPObject.URL = MP3Path
+            WMPObject.settings.setMode("loop", True)
+            WMPObject.controls.play()
         End Sub
 #End Region
 
-#Region "Input Events"
+#Region "Mouse Positions"
         Public Overrides Sub MouseClick(MouseButton As MouseButtons)
             If MouseButton = MouseButtons.Right Then
-                ' Toggle the background color on right mouse button click
+                'Toggle the background color on right mouse button click
                 BackgroundColor = If(BackgroundColor = Color.White, Color.Black, Color.White)
             ElseIf MouseButton = MouseButtons.Left Then
-                ' Toggle pause on the left mouse button click
-                Game.Paused = Not Game.Paused
+                'Toggle pause on the left mouse button click
+                Paused = Not Paused
             ElseIf MouseButton = MouseButtons.Middle Then
-                ' Advance to the next sine type
-                advanceSineType()
-            End If
-        End Sub
-
-        Public Overrides Sub KeyPress(KeyCode As Keys)
-            If KeyCode = Keys.Space Then
-                advanceSineType()
-            ElseIf KeyCode = Keys.P Then
-                Game.Paused = Not Game.Paused
-            ElseIf KeyCode = Keys.M Then
-                player.settings.mute = Not player.settings.mute
-            End If
-        End Sub
-
-        Public Overrides Sub onPause()
-            If Game.Paused Then
-                Sine.Pause()
-                DebuggingInfomation.Pause()
-                player.controls.pause()
-                ' Add paused text
-                add(PausedInformation)
-                ' Add paused transition
-                add(PausedInformation.ColorProperty, PausedTextColorTransition)
-            Else
-                Sine.Resume()
-                DebuggingInfomation.Resume()
-                ' Remove paused text
-                remove(PausedInformation)
-                ' Remove paused transition
-                remove(PausedTextColorTransition)
-                player.controls.play()
+                'Advance to the next sine type
+                AdvanceSineType()
             End If
         End Sub
 
@@ -231,8 +227,8 @@ Namespace Examples.Scenes
             'Change window fullscreen mode for double click on left mouse button
             If MouseButton = MouseButtons.Left Then
                 Game.Fullscreen = If(Game.Fullscreen, False, True)
-                Position.maxPosition = maxTransitionalPosition
-                Radius.maxDouble = maxTransitionalRadius
+                Position.maxPosition = MaxTransitionalPosition
+                Radius.maxDouble = MaxTransitionalRadius
                 PausedInformation.Position = Game.MIDDLE_POS
                 FullScreenInformation.Position = New Point(Game.BOTTOM_MIDDLE_POS.X, Game.BOTTOM_MIDDLE_POS.Y - 100)
             End If
@@ -241,17 +237,17 @@ Namespace Examples.Scenes
 
 #Region "Game Update & Render"
         Public Overrides Sub Update(delta As Double)
-            DebuggingInfomation.Text = String.Format("Sine Generator [{0}]{1}TextColor:{2}", Sine.toString(), Environment.NewLine, TextColorTransition.lastValue)
+            DebuggingInfomation.Text = String.Format("Sine Generator [{0}]{1}TextColor:{2}", Sine.GetStatistics(), Environment.NewLine, TextColorTransition.lastValue)
+            MyBase.Update(delta)
         End Sub
 
         Public Overrides Sub Render(g As Graphics)
-
+            MyBase.Render(g)
         End Sub
-
 #End Region
 
         Public Overrides Sub ExitGame()
-            player.controls.stop()
+            WMPObject.controls.stop()
         End Sub
     End Class
 End Namespace

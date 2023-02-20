@@ -100,10 +100,10 @@
                 Return _Enabled
             End Get
             Set(value As Boolean)
-                If value Then
-                    startTick = Now.Ticks()
-                    Evaluate()
-                End If
+                'If value Then
+                '    startTick = Now.Ticks()
+                '    Evaluate()
+                'End If
                 _Enabled = value
             End Set
         End Property
@@ -137,17 +137,16 @@
 
         Public Property Duration As TimeSpan = TimeSpan.FromSeconds(1)
 
-        Private startTick As Long
+        Private startTick As Long = 0
 
         Private Function GetDifference() As Long
-            Dim CurrentTick As Long = Now.Ticks()
-            Return CurrentTick - startTick
+            Return Now.Ticks() - startTick
         End Function
 
 #End Region
 
 #Region "Transition Function"
-        Private transitionTime As Long = Now.Ticks
+
         Public Property Direction As TransitionDirection = TransitionDirection.Forward
         ''' <summary>
         ''' Easy way to swap the transition
@@ -227,17 +226,20 @@
         ''' <remarks></remarks>
         Public ReadOnly Property Value As Object
             Get
+                If startTick = 0 Then startTick = Now.Ticks()
+
                 Dim difference As Long = GetDifference()
                 Dim v As Double = difference / (If(ReverseUsesDuration And Reverse, Duration.Ticks / 2, Duration.Ticks))
+
                 If (Enabled And Not Paused) AndAlso v < 1 Then
                     Return Value(v)
                 ElseIf (Enabled And Not Paused) AndAlso v >= 1 Then
-                    'If we are running a normal transition (A->B) OR if we have finished the reverse process without repition, stop everything
+                    'If we are running a normal transition (A->B) OR if we have finished the reverse process without repetition, stop everything
                     If Not Reverse And Not Repeat Or (Reverse AndAlso Not Repeat AndAlso _Direction = TransitionDirection.Backward) Then
                         Complete()
                         Return lastValue
                     ElseIf Not Reverse And Repeat Then
-                        'But, if we aren't reversing but we're repeating, start again from the first value
+                        ' if we not reversing but we're repeating, start again from the first value
                         C = A
                         RaiseEvent OnRepeat(Me)
                     Else
@@ -245,13 +247,13 @@
                         swapDirections()
                     End If
                     Evaluate()
-                    startTick = Now.Ticks()
+                    startTick = 0
                 End If
                 Return lastValue
             End Get
         End Property
         ''' <summary>
-        ''' Retrieve the last value that from the transition
+        ''' Retrieve the last value from the transition
         ''' </summary>
         ''' <value></value>
         ''' <returns></returns>

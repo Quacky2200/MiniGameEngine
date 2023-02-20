@@ -2,173 +2,146 @@
 Imports MiniGameEngine.General.Time
 Imports System.Drawing
 Imports MiniGameEngine.Transitions
-Imports System.Windows.Forms
-Imports MiniGameEngine.General.Threading
+Imports MiniGameEngine.UI
 
 Namespace Examples.Scenes
-    Public Enum WeatherType As Integer
-        Drizzle = 2
-        LightRain = 4
-        Rain = 6
-        Stormy = 8
-        HailFreakinStorm = 10
-    End Enum
     Public Class RaindropDemo
         Inherits Scene
 
-        Public Property MaxRaindrops As Integer = 100
+        Public Property MaxRaindrops As Integer = 500
         Public Property MaxRadius As Integer = 125
         Public Property MinRadius As Integer = 20
-        Public Property Type As WeatherType = WeatherType.Stormy
+
+        Private WeatherInformation As New TextElement("Weather") With {
+            .Font = New Font("consolas", 20),
+            .Position = Game.MIDDLE_POS,
+            .HorizontalAlignment = UI.HorizontalAlignment.Center,
+            .VerticalAlignment = UI.VerticalAlignment.Center,
+            .Color = Color.White,
+            .Visible = True,
+            .zIndex = 99
+        }
+
+        Private WeatherInformation2 As New TextElement("Current Chance") With {
+            .Font = New Font("consolas", 15),
+            .Position = New Point(Game.MIDDLE_POS.X, Game.MIDDLE_POS.Y + 25),
+            .HorizontalAlignment = UI.HorizontalAlignment.Center,
+            .VerticalAlignment = UI.VerticalAlignment.Center,
+            .Color = Color.White,
+            .Visible = True
+        }
+
+        'Text Transition
+        Private TextColorTransition As New ColorTransition(Color.Red, Color.Blue) With {
+            .Duration = TimeSpan.FromSeconds(5),
+            .Repeat = True,
+            .Reverse = True,
+            .ReverseUsesDuration = True,
+            .Enabled = True
+        }
+
+        'Private PausedTextColorTransition As New ColorTransition(Color.Black, Color.White) With {
+        '    .Repeat = True,
+        '    .Reverse = True,
+        '    .Enabled = True,
+        '    .Duration = TimeSpan.FromMilliseconds(100)
+        '}
+
+        Enum WeatherChance As UShort
+            Drizzle = 7
+            Rain = 3
+            Stormy = 0
+        End Enum
+        Public Property Weather As WeatherChance = WeatherChance.Stormy
+
+        Private LastUpdate As Long = Now.Ticks
+        Private Random As New Random
+        Private Cloud As New Raindrops(Me)
 
         Public Sub New(Game As GameContainer)
             MyBase.New(Game)
             BackgroundColor = Color.Black
         End Sub
 
-        Private Random As New Random
-        Private Cloud As New SmoothEchoDroplets(Me)
-        Private Information As New MiniGameEngine.UI.TextElement("Current Weather: Unknown") With {
-            .Font = New Font("Arial", 15),
-            .Position = Game.MIDDLE_POS,
-            .HorizontalAlignment = UI.HorizontalAlignment.Center,
-            .Color = Color.Blue
-        }
-        Private Help As New MiniGameEngine.UI.TextElement("
-Controls:
-Spacebar - Toggle Pause,
-       N - Change Weather,
-       M - Rain Button
-") With {
-            .Font = New Font("Arial", 10),
-            .Position = Game.TOP_RIGHT_POS,
-            .HorizontalAlignment = UI.HorizontalAlignment.Right,
-            .Color = Color.Gray
-        }
-
-        Private Pause As New MiniGameEngine.UI.TextElement("Rain Generation Paused") With {
-            .Font = New Font("Arial", 15),
-            .HorizontalAlignment = UI.HorizontalAlignment.Center,
-            .Color = Color.Gray
-        }
-
-        Public Overrides Sub WindowSizeChange()
-            Information.Position = Game.MIDDLE_POS
-
-            Dim Pos = Game.MIDDLE_POS
-            Pos.Offset(0, -25)
-            Pause.Position = Pos
-
-            Pos = Game.TOP_RIGHT_POS
-            Pos.Offset(-20, 0)
-            Help.Position = Pos
-        End Sub
-
-        Private WeatherChange As New Timer
-        Private DropSpawn As New Timer
-        Private Status As Boolean = True
-
-        Public Sub ChangeWeather()
-            Dim Choice As Integer = Math.Floor((New Random()).NextDouble() * _Amounts.Count)
-            Weather = _Amounts.ElementAt(Choice)
-            MinimumAmount = Weather.Value(0)
-            MaximumAmount = Weather.Value(1)
-            Information.Text = "Current Weather: " + Weather.Key
-            Spawned = 0
-
-            WeatherChange.Interval = Math.Floor((New Random()).NextDouble() * (30000 - 5000)) + 5000
-        End Sub
-
-        Public Sub Spawn()
-            Dim RaindropAmount As Integer = Math.Floor(Random.NextDouble() * (MaximumAmount - MinimumAmount)) + MinimumAmount
-
-            Dim CachedAmount As Integer = MaximumAmount
-            For i = 0 To RaindropAmount
-                Dim spawnPoint As New System.Drawing.Point(Random.Next(0, Game.Window.Size.Width + 150), Random.Next(0, Game.Window.Size.Height + 150))
-                Spawned = (Spawned + 1) Mod MaximumAmount + 1
-                ThreadWork.Start(Sub()
-                                     Cloud.Spawn(spawnPoint)
-                                 End Sub)
-            Next
-        End Sub
-
         Public Overrides Sub Init()
-            AddHandler WeatherChange.Tick, AddressOf ChangeWeather
-            WeatherChange.Interval = 1
-            WeatherChange.Start()
-
-            AddHandler DropSpawn.Tick, AddressOf Spawn
-            DropSpawn.Interval = 50
-            DropSpawn.Start()
-
-            WindowSizeChange()
-            Game.Window.FormBorderStyle = FormBorderStyle.Sizable
-            add(Information)
-            add(Help)
+            AddGameObject(WeatherInformation)
+            'AddGameObject(WeatherInformation2)
+            UpdateText()
         End Sub
 
-        Public Sub TogglePause()
-            Status = Not Status
-            If (Status) Then
-                DropSpawn.Start()
-                WeatherChange.Start()
-                remove(Pause)
-            Else
-                add(Pause)
-                DropSpawn.Stop()
-                WeatherChange.Stop()
+        Public Overrides Sub Update(delta As Double)
+            MyBase.Update(delta)
+
+            ' Perform rain check every 100ms
+            Dim Diff As Long = Now.Ticks - LastUpdate
+            Dim AsTimespan = TimeSpan.FromTicks(Diff)
+            If AsTimespan.Milliseconds < 50 Then Return
+
+            Dim Chance = Random.Next(0, 256)
+
+            'WeatherInformation2.Text = String.Format("Current Chance {0} ({1}, {2})", Chance, Weather + 0, Chance & Weather)
+
+            If (Chance And Weather) = Weather Then
+                Cloud.DropletRadius = Random.Next(20, 100)
+                Cloud.DropletCount = Random.Next(1, 5)
+
+                Select Case Random.Next(1, 6)
+                    Case 1
+                        Cloud.DropletColor = Color.MediumPurple
+                    Case 2
+                        Cloud.DropletColor = Color.LightBlue
+                    Case 3
+                        Cloud.DropletColor = Color.LightCoral
+                    Case 4
+                        Cloud.DropletColor = Color.PeachPuff
+                    Case 5
+                        Cloud.DropletColor = Color.PaleGreen
+                    Case 6
+                        Cloud.DropletColor = Color.LightSalmon
+                End Select
+
+                Cloud.Spawn(New Point(Random.Next(MinRadius, Game.Window.Size.Width - MaxRadius), Random.Next(MinRadius, Game.Window.Size.Height - MaxRadius)))
+            End If
+            LastUpdate = Now.Ticks
+        End Sub
+
+        Public Overrides Sub MouseClick(MouseButton As Windows.Forms.MouseButtons)
+            MyBase.MouseClick(MouseButton)
+
+            ToggleWeather()
+        End Sub
+
+        Public Overrides Sub KeyDown(KeyCode As Windows.Forms.Keys)
+            If (KeyCode = Windows.Forms.Keys.F11) Then
+                Game.Fullscreen = Not Game.Fullscreen
+                WeatherInformation.Position = Game.MIDDLE_POS
             End If
         End Sub
 
-        Public Overrides Sub MouseDoubleClick(MouseButton As MouseButtons)
-            Game.Fullscreen = Not Game.Fullscreen
-        End Sub
-
-        Public Overrides Sub MouseClick(MouseButton As MouseButtons)
-            'If MouseButton = MouseButtons.Left Then
-            '    TogglePause()
-            'Else
-            '    ChangeWeather()
-            'End If
-
-        End Sub
-
-        Public Overrides Sub KeyPress(KeyCode As Keys)
-            Select Case KeyCode
-                Case Keys.N
-                    ChangeWeather()
-                    Return
-                Case Keys.M
-                    Spawn()
-                    Return
-                Case Keys.F
-                    Game.Fullscreen = Not Game.Fullscreen
-                    Return
-                Case Keys.Space
-                    TogglePause()
-                    Return
+        Private Sub ToggleWeather()
+            Select Case Weather
+                Case WeatherChance.Drizzle
+                    Weather = WeatherChance.Rain
+                Case WeatherChance.Rain
+                    Weather = WeatherChance.Stormy
+                Case WeatherChance.Stormy
+                    Weather = WeatherChance.Drizzle
             End Select
+
+            UpdateText()
         End Sub
 
-        Public Overrides Sub Render(g As Drawing.Graphics)
+        Private Sub UpdateText()
+            WeatherInformation.Text = "Weather: "
 
-        End Sub
-
-        Private Weather As KeyValuePair(Of String, Integer())
-        Private _Amounts As New Dictionary(Of String, Integer()) From {
-            {"Drizzle", {0, 5}},
-            {"Light Rain", {0, 20}},
-            {"Rain Showers", {0, 50}},
-            {"Heavy Rain", {50, 150}},
-            {"Da-Rude Rain-Storm", {100, 200}},
-            {" The """"We're going to Die!"""" Hurricane", {250, 300}}
-        }
-        Private MaximumAmount As Double = 50
-        Private MinimumAmount As Double = 0
-        Private Spawned As Integer = 0
-
-        Public Overrides Sub Update(delta As Double)
-            Information.Text = String.Format("Current Weather: {0} (spawned {1} of {2})", Weather.Key, Spawned, MaximumAmount)
+            Select Case Weather
+                Case WeatherChance.Drizzle
+                    WeatherInformation.Text += "Drizzle"
+                Case WeatherChance.Rain
+                    WeatherInformation.Text += "Rain"
+                Case WeatherChance.Stormy
+                    WeatherInformation.Text += "Stormy"
+            End Select
         End Sub
     End Class
 End Namespace

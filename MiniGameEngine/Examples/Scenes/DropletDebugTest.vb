@@ -24,14 +24,15 @@ Namespace Examples.Scenes
         Public Overrides Sub MouseClick(MouseButton As MouseButtons)
             Select Case MouseButton
                 Case MouseButtons.Left
-                    Dim t As New Examples.Shapes.Raindrop2D(lastKnownLocation, 100) With {.lineColor = Color.AliceBlue}
-                    add(t)
+                    'Dim t As New Examples.Shapes.Circle(lastKnownLocation, 100) With {.LineColor = Color.AliceBlue}
 
-                    'Drops = New SimpleEchoDroplets(Me)
+                    'AddGameObject(t)
+
+                    Drops = New SimpleEchoDroplets(Me)
                 Case MouseButtons.Right
-                    'Drops = New Raindrops(Me) With {.dropletFadeColor = Color.FromArgb(0, 0, 68, 255), .dropletColor = Color.FromArgb(100, 138, 226, 255)}
+                    Drops = New Raindrops(Me) With {.DropletFadeColor = Color.FromArgb(0, 0, 68, 255), .DropletColor = Color.FromArgb(100, 138, 226, 255)}
                 Case Else
-                    ' Drops = New Waterdrops(Me) With {.dropletFadeColor = Color.FromArgb(0, 0, 68, 255), .dropletColor = Color.FromArgb(100, 138, 226, 255)}
+                    Drops = New Waterdrops(Me) With {.DropletFadeColor = Color.FromArgb(0, 0, 68, 255), .DropletColor = Color.FromArgb(100, 138, 226, 255)}
             End Select
 
             DropTypes.Position = Me.Game.MIDDLE_POS
@@ -41,8 +42,8 @@ Namespace Examples.Scenes
                 FadeInOut.Enabled = True
             End If
 
-            add(DropTypes.ColorProperty, FadeInOut)
-            'ThreadWork.Start(Sub() Drops.Spawn(lastKnownLocation))
+            DropTypes.AddTransition(DropTypes.ColorProperty, FadeInOut)
+            ThreadWork.Start(Sub() Drops.Spawn(lastKnownLocation))
         End Sub
         Private lastKnownLocation As New Point(0, 0)
         Public Overrides Sub MouseMove(Location As Point)
@@ -50,13 +51,15 @@ Namespace Examples.Scenes
         End Sub
 
         Public Overrides Sub Init()
-            add(DropTypes)
+            AddGameObject(DropTypes)
         End Sub
-        Public Overrides Sub Render(g As Graphics)
 
-        End Sub
-        Public Overrides Sub Update(delta As Double)
+        'Public Overrides Sub Render(g As Graphics)
+        '    MyBase.Render(g)
+        'End Sub
 
-        End Sub
+        'Public Overrides Sub Update(delta As Double)
+        '    MyBase.Update(delta)
+        'End Sub
     End Class
 End Namespace

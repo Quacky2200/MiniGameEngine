@@ -40,9 +40,7 @@ Namespace General.Threading
                 s.SpinOnce()
             End While
         End Sub
-
     End Class
-
 
     Partial Public MustInherit Class ThreadedLoop
         Private [Loop] As Thread
@@ -75,7 +73,5 @@ Namespace General.Threading
         End Sub
         Public MustOverride Sub Update()
     End Class
-    'Public Class GameThread
-    '    Inherits 
-    'End Class
+
 End Namespace

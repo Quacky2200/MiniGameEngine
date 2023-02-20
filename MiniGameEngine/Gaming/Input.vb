@@ -1,71 +1,52 @@
 ﻿Imports System.Windows.Forms
 Public Class Input
-
     Private WithEvents Listener As GameContainer
     Private WithEvents Window As Form
-    Private Property _Attached As Boolean
-    Private CachedKey(2) As Object
-    Const KEY_PRESS_MILLISECOND_REGISTER = 150
+    Private Attached As Boolean
 
     Public Sub New(ByRef Listener As GameContainer, Optional Attached As Boolean = True)
         Me.Listener = Listener
         Me.Window = Listener.Window
-        Me._Attached = Attached
+        Me.Attached = Attached
     End Sub
 
     Public Sub Attach()
-        _Attached = True
+        Attached = True
     End Sub
 
     Public Sub Detach()
-        _Attached = False
+        Attached = False
     End Sub
 
     Private Sub Me_KeyDown(sender As Object, e As KeyEventArgs) Handles Window.KeyDown
-        If _Attached Then
-            CachedKey(0) = DateTime.Now.Ticks
-            CachedKey(1) = e.KeyCode
-            Listener.currentScene.KeyDown(e.KeyCode)
-        End If
+        If Attached Then Listener.CurrentScene.KeyDown(e.KeyCode)
     End Sub
 
     Private Sub Me_KeyUp(sender As Object, e As KeyEventArgs) Handles Window.KeyUp
-        If _Attached Then
-            Dim diff As TimeSpan = DateTime.Now - New Date(CachedKey(0))
-            If (diff.Milliseconds < KEY_PRESS_MILLISECOND_REGISTER) AndAlso CachedKey(1) = e.KeyCode Then
-                CachedKey(0) = DateTime.Now.Ticks
-                CachedKey(1) = Nothing
-                Listener.currentScene.KeyPress(e.KeyCode)
-            End If
-            Listener.currentScene.KeyUp(e.KeyCode)
-        End If
+        If Attached Then Listener.CurrentScene.KeyUp(e.KeyCode)
     End Sub
 
-    Private Sub Me_KeyPress(sender As Object, e As KeyPressEventArgs) Handles Window.KeyPress
-        ' Ignore this, I have implemented this manually myself!
+    Private Sub Me_KeyPress(sender As Object, e As KeyPressEventArgs) ' Handles Window.KeyPress
+        ' Not supported since KeyPress is used to filter KeyUp from functioning by modifying the KeyPressEventArgs.Handled property
+        ' See https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.control.keypress?view=windowsdesktop-7.0 for more information
+        ' If _Attached Then Listener.CurrentScene.KeyPress(???)
     End Sub
 
     Private Sub Me_MouseDown(sender As Object, e As MouseEventArgs) Handles Window.MouseDown
-        If _Attached Then Listener.currentScene.MouseDown(e.Button)
+        If Attached Then Listener.CurrentScene.MouseDown(e.Button)
     End Sub
 
     Private Sub Me_MouseUp(sender As Object, e As MouseEventArgs) Handles Window.MouseUp
-        If _Attached Then Listener.currentScene.MouseUp(e.Button)
+        If Attached Then Listener.CurrentScene.MouseUp(e.Button)
     End Sub
 
     Private Sub Me_MouseClick(sender As Object, e As MouseEventArgs) Handles Window.MouseClick
-        If _Attached Then Listener.currentScene.MouseClick(e.Button)
+        If Attached Then Listener.CurrentScene.MouseClick(e.Button)
     End Sub
-
     Private Sub Me_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles Window.MouseDoubleClick
-        If _Attached Then Listener.currentScene.MouseDoubleClick(e.Button)
+        If Attached Then Listener.CurrentScene.MouseDoubleClick(e.Button)
     End Sub
-
     Private Sub Me_MouseMove(sender As Object, e As MouseEventArgs) Handles Window.MouseMove
-        If _Attached Then Listener.currentScene.MouseMove(e.Location)
-    End Sub
-
-    Private Sub Me_SizeChanged(sender As Object, e As Object) Handles Window.SizeChanged
-        If _Attached Then Listener.currentScene.WindowSizeChange()
+        If Attached Then Listener.CurrentScene.MouseMove(e.Location)
     End Sub
 End Class

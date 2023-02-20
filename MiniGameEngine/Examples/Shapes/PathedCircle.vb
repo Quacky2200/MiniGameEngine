@@ -22,9 +22,9 @@ Namespace Examples.Shapes
 #End Region
 
 #Region "Transition Properties"
-        Private _ColorProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transitions.Transition)
-                                                                 Me.lineColor = CType(Transition.Value, Color)
-                                                             End Sub)
+        Private _ColorProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.Transition)
+                                                                    Me.lineColor = CType(Transition.Value, Color)
+                                                                End Sub)
 
         Public ReadOnly Property ColorProperty As TransitionProperty
             Get
@@ -32,27 +32,27 @@ Namespace Examples.Shapes
             End Get
         End Property
 
-        Private _FillProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transitions.Transition)
-                                                                Me.fillColor = CType(Transition.Value, Color)
-                                                            End Sub)
+        Private _FillProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.Transition)
+                                                                   Me.fillColor = CType(Transition.Value, Color)
+                                                               End Sub)
         Public ReadOnly Property FillProperty As TransitionProperty
             Get
                 Return _FillProperty
             End Get
         End Property
 
-        Private _RadiusProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transitions.Transition)
-                                                                  Me.radius = CDbl(Transition.Value)
-                                                              End Sub)
+        Private _RadiusProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.Transition)
+                                                                     Me.radius = CDbl(Transition.Value)
+                                                                 End Sub)
         Public ReadOnly Property RadiusProperty As TransitionProperty
             Get
                 Return _RadiusProperty
             End Get
         End Property
 
-        Private _lineWidthProperty As New TransitionProperty(Me, Sub(ByRef Transition As Transitions.Transition)
-                                                                     Me.lineWidth = CInt(Transition.Value)
-                                                                 End Sub)
+        Private _lineWidthProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.Transition)
+                                                                        Me.lineWidth = CInt(Transition.Value)
+                                                                    End Sub)
         Public ReadOnly Property lineWidthProperty As TransitionProperty
             Get
                 Return _lineWidthProperty
@@ -152,8 +152,8 @@ Namespace Examples.Shapes
             Dim SquareDistance As Double = (Position.X - Point.X) ^ 2 + (Position.Y - Point.Y) ^ 2
             Return SquareDistance <= (radius ^ 2)
         End Function
-        Public Overrides Sub Update(delta As Double)
-
-        End Sub
+        'Public Overrides Sub Update(delta As Double)
+        '    MyBase.Update(delta)
+        'End Sub
     End Class
 End Namespace

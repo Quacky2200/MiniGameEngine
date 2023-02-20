@@ -5,13 +5,16 @@ Namespace Examples.Droplets
         Public Sub New(Scene As Scene)
             MyBase.New(Scene)
         End Sub
-        Friend Overloads Overrides Sub Spawn(ByVal i As Integer, ByRef currentCircle As Shapes.Circle)
-            Dim circleDissipate As New Transitions.ColorTransition(dropletColor, dropletFadeColor) With {.Enabled = True, .Duration = TimeSpan.FromTicks(MovementDuration.Ticks + TimeSpan.FromMilliseconds(150 * i).Ticks)}
-            Dim circleMovement As New DoubleTransition(0, 0, dropletRadius, TimeSpan.FromTicks(MovementDuration.Ticks + TimeSpan.FromMilliseconds(150 * i).Ticks), True)
-            Dim circle As Shapes.Circle = currentCircle
-            Scene.add(circle.RadiusProperty, circleMovement, True, False)
-            Scene.add(circle.ColorProperty, circleDissipate, True, True)
-            Threading.Thread.Sleep(1)
+
+        Friend Overloads Overrides Sub Spawn(ByVal i As Integer, ByRef CurrentCircle As Shapes.Circle)
+            Dim DissipationRate As Double = 150 * (Math.Max(DropletRadius, 100) / 100)
+            Dim CircleDissipate As New Transitions.ColorTransition(DropletColor, DropletFadeColor) With {
+                .Enabled = True, .Duration = TimeSpan.FromTicks(MovementDuration.Ticks + TimeSpan.FromMilliseconds(DissipationRate * i).Ticks)
+            }
+            Dim CircleMovement As New DoubleTransition(0, 0, DropletRadius, TimeSpan.FromTicks(MovementDuration.Ticks + TimeSpan.FromMilliseconds(DissipationRate * i).Ticks), True)
+            Dim Circle As Shapes.Circle = CurrentCircle
+            Circle.AddTransition(Circle.RadiusProperty, CircleMovement, True, False)
+            Circle.AddTransition(Circle.ColorProperty, CircleDissipate, True, True)
         End Sub
     End Class
 End Namespace
