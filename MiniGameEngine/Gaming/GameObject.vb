@@ -41,6 +41,10 @@ Public MustInherit Class GameObject
     Public Property zIndex As Integer = 0
     Public Property Visible As Boolean = True
 
+    Public Sub New()
+
+    End Sub
+
     Public Sub Show()
         Visible = True
     End Sub
@@ -49,8 +53,20 @@ Public MustInherit Class GameObject
         Visible = False
     End Sub
 
-    Public Sub New()
+    Public Sub Pause()
+        SyncLock Transitions
+            For Each KVP In Transitions
+                KVP.Value.Transition.Paused = True
+            Next
+        End SyncLock
+    End Sub
 
+    Public Sub [Resume]()
+        SyncLock Transitions
+            For Each KVP In Transitions
+                KVP.Value.Transition.Paused = False
+            Next
+        End SyncLock
     End Sub
 
     Public Sub ReferTo(ByRef Scene As Scene)

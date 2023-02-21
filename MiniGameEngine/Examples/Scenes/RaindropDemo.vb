@@ -93,12 +93,11 @@ Namespace Examples.Scenes
             ' Perform rain check every 25ms
             Dim Diff As Long = Now.Ticks - LastUpdate
             Dim AsTimespan = TimeSpan.FromTicks(Diff)
-            If AsTimespan.Milliseconds < 50 Then Return
+            If AsTimespan.Milliseconds < 25 Then Return
 
             Dim Chance = Random.Next(0, 256)
 
             If (Chance And Weather) = Weather Then
-
                 Select Case Random.Next(1, 11)
                     Case 10
                         Cloud.DropletRadius = Random.Next(100, 200)
@@ -112,7 +111,6 @@ Namespace Examples.Scenes
                         Cloud.MovementDuration = TimeSpan.FromMilliseconds(800)
                         LastSpawn = New Point(Random.Next(MinRadius, Game.Width - MaxRadius), Random.Next(MinRadius, Game.Height - MaxRadius))
                 End Select
-
                 Cloud.Spawn(LastSpawn)
             End If
             LastUpdate = Now.Ticks

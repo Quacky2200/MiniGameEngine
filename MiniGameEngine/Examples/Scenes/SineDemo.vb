@@ -1,7 +1,5 @@
-﻿Imports MiniGameEngine
-Imports MiniGameEngine.Transitions
+﻿Imports MiniGameEngine.Transitions
 Imports System.Reflection
-Imports WMPLib
 Imports System.Drawing
 Imports System.Windows.Forms
 Imports MiniGameEngine.Examples.Shapes
@@ -11,42 +9,23 @@ Imports MiniGameEngine.UI
 Namespace Examples.Scenes
     Public Class SineDemo
         Inherits Scene
-        Public Sine As New SineCircle(Game.MIDDLE_POS, Game.Height / 3, 40, 40)
 
 #Region "General Properties"
-        Private Property Paused As Boolean
-            Get
-                Return PausedInformation.Visible
-            End Get
-            Set(value As Boolean)
-                If (value) Then
-                    WMPObject.controls.pause()
-                Else
-                    WMPObject.controls.play()
-                End If
-
-                Radius.Paused = value
-                Frequency.Paused = value
-                Depth.Paused = value
-                Position.Paused = value
-                Rotation.Paused = value
-                SineColorTransition.Paused = value
-                PausedInformation.Visible = value
-                TextColorTransition.Paused = value
-            End Set
-        End Property
 
         'Music
         Private MP3Path As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "temp.mp3")
         Private WMPObject As New WMPLib.WindowsMediaPlayer()
 
-        'Information
+        'GameObjects
+        Public Sine As New SineCircle(Game.MIDDLE_POS, Game.Height / 3, 40, 40)
         Private DebuggingInfomation As New TextElement("") With {
             .Position = New Point(0, 15),
             .Font = New Font("consolas", 10)
         }
 
-        Private FullScreenInformation As New TextElement("Double-click to toggle fullscreen") With {
+        Private FullScreenInformation As New TextElement(
+            $"Left-Click to cycle through sine circles. Right-Click to toggle background color{Environment.NewLine}{"".PadLeft(18)}[Space] to pause. [F11] to toggle fullscreen"
+        ) With {
             .Font = New Font("consolas", 14),
             .Position = New Point(Game.BOTTOM_MIDDLE_POS.X, Game.BOTTOM_MIDDLE_POS.Y - 100),
             .HorizontalAlignment = UI.HorizontalAlignment.Center,
@@ -62,8 +41,8 @@ Namespace Examples.Scenes
             .zIndex = 99
         }
 
-        'Text Transition
-        Private TextColorTransition As New ColorTransition(Color.Red, Color.Blue) With {
+        'Transitions
+        Private DebugTextColorTransition As New ColorTransition(Color.Red, Color.Blue) With {
             .Duration = TimeSpan.FromSeconds(5),
             .Repeat = True,
             .Reverse = True,
@@ -78,6 +57,17 @@ Namespace Examples.Scenes
             .Duration = TimeSpan.FromMilliseconds(100)
         }
 
+        Public Radius As New RandomDoubleTransition(50, 20, MaxTransitionalRadius()) With {.Repeat = True, .Reverse = True, .Enabled = True}
+
+        Public Frequency As New RandomDoubleTransition(24, 0, 85) With {.Repeat = True, .Reverse = True, .Enabled = True}
+
+        Public Depth As New RandomDoubleTransition(25, 0, 80) With {.Repeat = True, .Reverse = True, .Enabled = True}
+
+        Public Position As New RandomPointTransition(Game.MIDDLE_POS, MinTransitionalPosition(), MaxTransitionalPosition()) With {.Repeat = True, .Reverse = True, .Enabled = True}
+
+        Public Rotation As New RandomDoubleTransition(0, 360) With {.Repeat = True, .Reverse = True, .ReverseUsesDuration = True, .Enabled = True}
+
+        Public SineColorTransition As New ColorTransition(Color.Red, Color.LimeGreen) With {.Duration = TimeSpan.FromSeconds(5), .Repeat = True, .Reverse = True, .Enabled = True}
 #End Region
 
 #Region "Sine Circle Types"
@@ -118,22 +108,6 @@ Namespace Examples.Scenes
         End Sub
 #End Region
 
-#Region "Transitions"
-
-        Public Radius As New RandomDoubleTransition(50, 20, MaxTransitionalRadius()) With {.Repeat = True, .Reverse = True, .Enabled = True}
-
-        Public Frequency As New RandomDoubleTransition(24, 0, 85) With {.Repeat = True, .Reverse = True, .Enabled = True}
-
-        Public Depth As New RandomDoubleTransition(25, 0, 80) With {.Repeat = True, .Reverse = True, .Enabled = True}
-
-        Public Position As New RandomPointTransition(Game.MIDDLE_POS, MinTransitionalPosition(), MaxTransitionalPosition()) With {.Repeat = True, .Reverse = True, .Enabled = True}
-
-        Public Rotation As New RandomDoubleTransition(0, 360) With {.Repeat = True, .Reverse = True, .ReverseUsesDuration = True, .Enabled = True}
-
-        Public SineColorTransition As New ColorTransition(Color.Red, Color.LimeGreen) With {.Duration = TimeSpan.FromSeconds(5), .Repeat = True, .Reverse = True, .Enabled = True}
-
-#End Region
-
 #Region "Min/Max Properties"
         Public ReadOnly Property MaxTransitionalPosition() As Point
             Get
@@ -160,6 +134,9 @@ Namespace Examples.Scenes
         End Sub
 
         Public Overrides Sub Init()
+            Game.FPSRefreshRate = TimeSpan.FromSeconds(0.25)
+            Game.MustSmooth = True
+
             'Add the sine circle
             AddGameObject(Sine)
             'Get the first Sine Type and change it
@@ -176,11 +153,11 @@ Namespace Examples.Scenes
             'Add the debugging information text
             AddGameObject(DebuggingInfomation)
             'Add the debugging information transition
-            Sine.AddTransition(DebuggingInfomation.ColorProperty, TextColorTransition)
+            Sine.AddTransition(DebuggingInfomation.ColorProperty, DebugTextColorTransition)
             'Add the fullscreen information text
             AddGameObject(FullScreenInformation)
             'Add the same debugging transition to fullscreen text
-            FullScreenInformation.AddTransition(FullScreenInformation.ColorProperty, TextColorTransition)
+            FullScreenInformation.AddTransition(FullScreenInformation.ColorProperty, DebugTextColorTransition)
             'Add paused text
             AddGameObject(PausedInformation)
 
@@ -204,13 +181,15 @@ Namespace Examples.Scenes
             'Close the stream, now ready to be played
             AudioWriteStream.Close()
             'Play the music from temporary file 
+            'WMPObject.settings.autoStart = False
             WMPObject.URL = MP3Path
             WMPObject.settings.setMode("loop", True)
             WMPObject.controls.play()
+            'Paused = True
         End Sub
 #End Region
 
-#Region "Mouse Positions"
+#Region "Mouse & Keyboard Input"
         Public Overrides Sub MouseClick(MouseButton As MouseButtons)
             If MouseButton = MouseButtons.Right Then
                 'Toggle the background color on right mouse button click
@@ -243,15 +222,39 @@ Namespace Examples.Scenes
 #End Region
 
 #Region "Game Update & Render"
+        Private ReadOnly DebugText As New StatisticVariable(Of String)(AddressOf UpdateDebuggingText, TimeSpan.FromMilliseconds(50))
+        Private Function UpdateDebuggingText() As String
+            Return $"Sine Generator [{Sine.GetStatistics()}]{Environment.NewLine}TextColor:{DebugTextColorTransition.lastValue}"
+        End Function
+
         Public Overrides Sub Update(delta As Double)
-            DebuggingInfomation.Text = String.Format("Sine Generator [{0}]{1}TextColor:{2}", Sine.GetStatistics(), Environment.NewLine, TextColorTransition.lastValue)
             MyBase.Update(delta)
+            DebuggingInfomation.Text = DebugText.Value
         End Sub
 
         Public Overrides Sub Render(g As Graphics)
             MyBase.Render(g)
         End Sub
 #End Region
+
+        Private Property Paused As Boolean
+            Get
+                Return PausedInformation.Visible
+            End Get
+            Set(value As Boolean)
+                If (value) Then
+                    WMPObject.controls.pause()
+                    Sine.Pause()
+                    DebuggingInfomation.Pause()
+                Else
+                    WMPObject.controls.play()
+                    Sine.Resume()
+                    DebuggingInfomation.Resume()
+                End If
+
+                PausedInformation.Visible = value
+            End Set
+        End Property
 
         Public Overrides Sub ExitGame()
             MyBase.ExitGame()

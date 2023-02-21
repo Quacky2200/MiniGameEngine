@@ -51,6 +51,22 @@ Partial Public MustInherit Class Scene
         RefreshZIndexes()
     End Sub
 
+    Public Sub Pause()
+        GameObjects.Access(Sub(Collection)
+                               For Each O In Collection
+                                   O.Pause()
+                               Next
+                           End Sub)
+    End Sub
+
+    Public Sub [Resume]()
+        GameObjects.Access(Sub(Collection)
+                               For Each O In Collection
+                                   O.Resume()
+                               Next
+                           End Sub)
+    End Sub
+
     Public Sub New(Game As GameContainer)
         Me.Game = Game
     End Sub

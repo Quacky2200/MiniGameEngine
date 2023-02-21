@@ -24,9 +24,16 @@ Public Class GameContainer
         Set(value As Boolean)
             If value = _Paused Then Return
 
+            If value Then
+                CurrentScene?.Pause()
+            Else
+                CurrentScene?.Resume()
+            End If
+
             If Not value Then
                 ' Prevent jump when resuming
-                LastFrame = Now.Ticks
+                FrameTime = Now.Ticks
+                UpdateTime = Now.Ticks
             End If
 
             _Paused = value
@@ -62,9 +69,8 @@ Public Class GameContainer
     ''' <remarks></remarks>
     Private Sub GameMainThread()
         If IsNothing(CurrentScene) Or (Not Enabled) Or Paused Then Return
-        LastMs = GetTime()
-        CurrentScene.Update(GetDelta())
-        UpdateThreadMs()
+        CurrentScene.Update(FrameDelta)
+        UpdateTime = Now.Ticks
     End Sub
 #End Region
 
@@ -92,6 +98,19 @@ Public Class GameContainer
     Private Sub Me_Shown(sender As Object, e As EventArgs) Handles Window.Shown
         Start()
     End Sub
+
+    Private ReadOnly GameObjectStatistics As New StatisticVariable(Of Long)(Function() CurrentScene?.GameObjects.Count Or 0, TimeSpan.FromMilliseconds(100))
+    Private ReadOnly GameStatistics As New StatisticVariable(Of String)(AddressOf UpdateGameStatistics, TimeSpan.FromMilliseconds(100))
+
+    Private Function UpdateGameStatistics() As String
+        Return $"FPS: {FPS.ToString("0.00")}, Update: {ThreadMs.ToString("0.00")}ms ({GameObjectStatistics.Value} GameObjects)"
+    End Function
+
+    Public Property MustSmooth As Boolean = False
+    Public Property MustInterpolate As Boolean = False
+    Public Property MustAntiAliasText As Boolean = False
+
+
     ''' <summary>
     ''' Paint the screen (render the current scene)
     ''' </summary>
@@ -99,18 +118,21 @@ Public Class GameContainer
     ''' <param name="e"></param>
     ''' <remarks></remarks>
     Private Sub Me_Paint(sender As Object, e As System.Windows.Forms.PaintEventArgs) Handles Window.Paint
-        Cursor.Clip = If(Clip, Window.RectangleToScreen(Window.ClientRectangle), Nothing)
+        If (Clip AndAlso Cursor.Clip = Nothing) Or (Not Clip AndAlso Not Cursor.Clip = Nothing) Then
+            Cursor.Clip = If(Clip, Window.RectangleToScreen(Window.ClientRectangle), Nothing)
+        End If
 
-        If IsNothing(_CurrentScene) Then Return
+        If MustSmooth Then e.Graphics.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+        If MustInterpolate Then e.Graphics.InterpolationMode = Drawing2D.InterpolationMode.HighQualityBicubic
+        If MustAntiAliasText Then e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias
 
         e.Graphics.Clear(CurrentScene.BackgroundColor)
-        e.Graphics.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
-        e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias
-        e.Graphics.InterpolationMode = Drawing2D.InterpolationMode.HighQualityBicubic
-        CurrentScene.Render(e.Graphics)
-        UpdateFPS()
-        If ShowFPS Then e.Graphics.DrawString(String.Format("FPS: {0}, LoopMs {1}ms ({2} GameObjects)", FPS, LoopMs, CurrentScene.GameObjects.Count), _Window.Font, Brushes.Red, New Point(0, 0))
-        LastFrame = Now.Ticks()
+
+        CurrentScene?.Render(e.Graphics)
+
+        If ShowFPS Then e.Graphics.DrawString(GameStatistics.Value, _Window.Font, Brushes.Red, Point.Empty)
+
+        FrameTime = Now.Ticks()
     End Sub
 
     Private pausedBeforeUnfocus As Boolean = False
@@ -226,7 +248,6 @@ Public Class GameContainer
             _CurrentScene = Scene 'Scenes(index)
             CurrentScene.Enter(PreviousScene)
             CurrentScene.Init()
-            LastFrame = Now.Ticks()
         Else
             Throw New Exception("Scene not in index.")
         End If
@@ -285,50 +306,53 @@ Public Class GameContainer
 #End Region
 
 #Region "Timing"
-    Private Property LastFrame As Long = GetTime()
-    Private Property LastFPS As Long = GetTime()
-    Private Property LastMs As Long = GetTime()
-    Private Property FPSCounter As Integer = 0
-    Public Property FPS As Integer = 0
-    Public Property LoopMs As Long = 0
+    Private Property FrameTime As Long = Now.Ticks
+    Private Property UpdateTime As Long = Now.Ticks
 
-    ''' <summary>
-    ''' Get the time in milliseconds
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Private Function GetTime() As Long
-        Return Watch.getLiveMilliseconds
-    End Function
+    Private ReadOnly Property FrameDifference As Double
+        Get
+            Return Now.Ticks - FrameTime
+        End Get
+    End Property
 
-    ''' <summary>
-    ''' Get the number of milliseconds that have past since the last frame
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Private Function GetDelta() As Double
-        Dim Time As Long = GetTime()
-        Dim Delta As Double = (Time - LastFrame) / TimeSpan.TicksPerMillisecond
-        LastFrame = Time
-        Return Math.Max(0, Delta)
-    End Function
+    Private ReadOnly Property FrameDelta As Double
+        Get
+            Return Math.Max(0, FrameDifference / TimeSpan.TicksPerMillisecond)
+        End Get
+    End Property
 
-    Private Sub UpdateFPS()
-        Dim Diff As Long = GetTime() - LastFPS
-        If Diff >= 1000 Then
-            FPS = FPSCounter
-            FPSCounter = 0
-            LastFPS += 1000 ' Diff
-        End If
-        FPSCounter += 1
-    End Sub
+    Private ReadOnly FPSStatistic As New StatisticVariable(Of Double)(Function() 1.0 / (FrameDifference / TimeSpan.TicksPerSecond), TimeSpan.FromMilliseconds(100))
+    Public ReadOnly Property FPS As Double
+        Get
+            Return FPSStatistic.Value
+        End Get
+    End Property
 
-    Private Sub UpdateThreadMs()
-        LoopMs = GetTime() - LastMs
-        LastMs = GetTime()
-    End Sub
+    Private ReadOnly ThreadMsStatistic As New StatisticVariable(Of Double)(Function() Math.Max(0, (Now.Ticks - UpdateTime) / TimeSpan.TicksPerMillisecond), TimeSpan.FromMilliseconds(100))
+    Public ReadOnly Property ThreadMs As Double
+        Get
+            Return ThreadMsStatistic.Value
+        End Get
+    End Property
 
     Public Property ShowFPS As Boolean = True
+    Public Property FPSRefreshRate As TimeSpan
+        Get
+            Return FPSStatistic.Timeout
+        End Get
+        Set(value As TimeSpan)
+            FPSStatistic.Timeout = value
+        End Set
+    End Property
+
+    Public Property ThreadMsRefreshRate As TimeSpan
+        Get
+            Return ThreadMsStatistic.Timeout
+        End Get
+        Set(value As TimeSpan)
+            ThreadMsStatistic.Timeout = value
+        End Set
+    End Property
 #End Region
 
 #Region "Window Properties"
