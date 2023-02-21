@@ -51,6 +51,10 @@ Namespace Examples.Scenes
 
         Private MP3Path = IO.Path.Combine(My.Application.Info.DirectoryPath, "rains-falling-on-my-head.mp3")
         Public Overrides Sub Init()
+            Game.MustSmooth = True
+            Game.MustInterpolate = True
+            Game.MustAntiAliasText = True
+
             AddHandler Game.Window.SizeChanged, AddressOf Resize
             AddGameObject(WeatherInformation)
             UpdateText()
