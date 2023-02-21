@@ -81,6 +81,7 @@ Namespace Examples.Scenes
         Public Overrides Sub ExitGame()
             MyBase.ExitGame()
             WMPObject.controls.stop()
+            WMPObject.close()
             IO.File.Delete(MP3Path)
         End Sub
 
@@ -92,7 +93,7 @@ Namespace Examples.Scenes
             ' Perform rain check every 25ms
             Dim Diff As Long = Now.Ticks - LastUpdate
             Dim AsTimespan = TimeSpan.FromTicks(Diff)
-            If AsTimespan.Milliseconds < 25 Then Return
+            If AsTimespan.Milliseconds < 50 Then Return
 
             Dim Chance = Random.Next(0, 256)
 

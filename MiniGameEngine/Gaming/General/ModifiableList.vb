@@ -21,12 +21,8 @@ Public Class ModifiableList(Of T)
                 Dim Count = Pool.Count - 1
                 For i = 0 To Count
                     Dim Operation = Pool.Pop()
-                    Operation.Call()
+                    Operation?.Call()
                 Next
-                'Pool.Each(Sub(O)
-                '              O.Call()
-                '              Pool.Remove(O)
-                '          End Sub)
             End SyncLock
         End SyncLock
     End Sub

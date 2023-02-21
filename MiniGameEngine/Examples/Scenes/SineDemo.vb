@@ -256,6 +256,7 @@ Namespace Examples.Scenes
         Public Overrides Sub ExitGame()
             MyBase.ExitGame()
             WMPObject.controls.stop()
+            WMPObject.close()
             IO.File.Delete(MP3Path)
         End Sub
     End Class
