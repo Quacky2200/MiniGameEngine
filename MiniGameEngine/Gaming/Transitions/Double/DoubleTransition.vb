@@ -4,19 +4,12 @@
         Public Sub New(A As Double, B As Double)
             MyBase.New(A, B)
         End Sub
-        Public Sub New(StartPosition As Double, A As Double, B As Double, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = True)
-            MyBase.New(StartPosition, A, B, Duration, Enabled)
+        Public Sub New(StartValue As Double, EndValue As Double, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = True)
+            MyBase.New(StartValue, EndValue, Duration, Enabled)
         End Sub
 
-        Public Sub New(A As Double, B As Double, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = True)
-            MyBase.New(A, A, B, Duration, Enabled)
-        End Sub
-        Public Overrides Function ConvertFromRaw(rawValues() As Double) As Object
-            Return rawValues(0)
-        End Function
-
-        Public Overrides Function ConvertToRaw(obj As Object) As Double()
-            Return {obj}
+        Protected Overrides Function GetValue(StartValue As Object, EndValue As Object, T As Double) As Object
+            Return EasingFunction(CDbl(StartValue), CDbl(EndValue), T)
         End Function
     End Class
 End Namespace

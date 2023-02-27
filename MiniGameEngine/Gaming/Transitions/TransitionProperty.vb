@@ -1,15 +1,19 @@
-﻿Namespace Transitions
+﻿Imports MiniGameEngine.Observers
+
+Namespace Transitions
+
     Public Class TransitionProperty
-        Public ReadOnly ID As String = Guid.NewGuid().ToString
-        Public Delegate Sub Worker(ByRef Transition As Transition)
-        Private _Work As Worker
-        Public Property ObjectID As String
-        Public Sub New(ByVal ObjectID As String, ByVal Work As Worker)
-            Me.ObjectID = ObjectID
-            Me._Work = Work
+        Inherits Subscriber(Of Object)
+
+        Public Delegate Sub PropertyUpdateDelegate(ByRef Sender As Observable(Of Object), ByRef Value As Object)
+        Private ReadOnly [Delegate] As PropertyUpdateDelegate
+
+        Public Sub New(ByVal [Delegate] As PropertyUpdateDelegate)
+            Me.Delegate = [Delegate]
         End Sub
-        Public Sub Work(ByVal Transition As Transition)
-            Me._Work(Transition)
+
+        Public Overrides Sub Notify(Value As Object)
+            [Delegate](Observer, Value)
         End Sub
     End Class
 End Namespace

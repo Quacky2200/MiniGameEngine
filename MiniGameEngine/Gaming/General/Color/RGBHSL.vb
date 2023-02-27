@@ -217,5 +217,10 @@ Namespace General.Color
 
             Return hsl
         End Function 'RGB_to_HSL
+
+        Public Shared Function HSL_to_Color(HSL As HSL) As System.Drawing.Color
+            Return HSL_to_RGB(HSL)
+        End Function
+
     End Class 'RGBHSL
 End Namespace

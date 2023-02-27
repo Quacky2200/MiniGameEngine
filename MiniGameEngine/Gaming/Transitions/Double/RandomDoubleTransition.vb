@@ -1,29 +1,40 @@
 ﻿Namespace Transitions
     Public Class RandomDoubleTransition
         Inherits DoubleTransition
-        Public Property minDouble As Double
-        Public Property maxDouble As Double
-        Private random As New Random
-        Public Sub New(minDouble As Double, maxDouble As Double)
-            MyBase.New(minDouble, maxDouble)
-            Me.minDouble = minDouble
-            Me.maxDouble = maxDouble
+        Public Property MinDouble As Double
+        Public Property MaxDouble As Double
+
+        Private ReadOnly Random As New Random()
+
+        Public Sub New(MinDouble As Double, MaxDouble As Double)
+            MyBase.New(MinDouble, MaxDouble)
+            Me.MinDouble = MinDouble
+            Me.MaxDouble = MaxDouble
+
+            Randomise()
         End Sub
-        Public Sub New(currentDouble As Double, minDouble As Double, maxDouble As Double)
-            MyBase.New(currentDouble, minDouble, maxDouble)
-            Me.minDouble = minDouble
-            Me.maxDouble = maxDouble
+
+        Public Sub New(CurrentDouble As Double, MinDouble As Double, MaxDouble As Double)
+            MyBase.New(CurrentDouble, CurrentDouble)
+            Me.Value = CurrentDouble
+
+            Me.MinDouble = MinDouble
+            Me.MaxDouble = MaxDouble
+
+            Randomise()
         End Sub
-        Private Sub randomise(sender As Object) Handles Me.OnRepeat
-            Me.A = Me.B
-            Me.B = (random.NextDouble() * maxDouble) + minDouble
+
+        Private Sub Randomise()
+            Me.StartValue = If(Me.Reverse, Me.StartValue, Me.EndValue)
+            Me.EndValue = (Random.NextDouble() * MaxDouble) + MinDouble
         End Sub
-        Private Sub Reversed(oldDirection As TransitionDirection, newDirection As TransitionDirection) Handles Me.OnReverse
-            If oldDirection = TransitionDirection.Forward Then
-                Me.B = (random.NextDouble() * maxDouble) + minDouble
-            Else
-                Me.A = (random.NextDouble() * maxDouble) + minDouble
-            End If
+
+        Private Sub RandomDoubleTransition_OnRepeat(Sender As Object) Handles Me.OnRepeat
+            Randomise()
+        End Sub
+
+        Private Sub RandomDoubleTransition_OnReverse(OldDirection As TransitionDirection, NewDirection As TransitionDirection) Handles Me.OnReverse
+            If (NewDirection = TransitionDirection.Forward) Then Randomise()
         End Sub
     End Class
 End Namespace

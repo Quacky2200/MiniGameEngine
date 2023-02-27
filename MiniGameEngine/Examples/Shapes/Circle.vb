@@ -22,42 +22,25 @@ Namespace Examples.Shapes
 #End Region
 
 #Region "Transition Properties"
-        Private _ColorProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transition)
-                                                                    LineColor = CType(Transition.Value, Color)
-                                                                End Sub)
+        Public ReadOnly ColorProperty As New TransitionProperty(AddressOf OnColorPropertyUpdated)
+        Private Sub OnColorPropertyUpdated(ByRef Sender As Object, ByRef Value As Object)
+            LineColor = CType(Value, Color)
+        End Sub
 
-        Public ReadOnly Property ColorProperty As TransitionProperty
-            Get
-                Return _ColorProperty
-            End Get
-        End Property
+        Public ReadOnly FillProperty As New TransitionProperty(AddressOf OnFillPropertyUpdated)
+        Private Sub OnFillPropertyUpdated(ByRef Sender As Object, ByRef Value As Object)
+            FillColor = CType(Value, Color)
+        End Sub
 
-        Private _FillProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transition)
-                                                                   FillColor = CType(Transition.Value, Color)
-                                                               End Sub)
-        Public ReadOnly Property FillProperty As TransitionProperty
-            Get
-                Return _FillProperty
-            End Get
-        End Property
+        Public ReadOnly RadiusProperty As New TransitionProperty(AddressOf OnRadiusPropertyUpdated)
+        Private Sub OnRadiusPropertyUpdated(ByRef Sender As Object, ByRef Value As Object)
+            Radius = CDbl(Value)
+        End Sub
 
-        Private _RadiusProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transition)
-                                                                     Radius = CDbl(Transition.Value)
-                                                                 End Sub)
-        Public ReadOnly Property RadiusProperty As TransitionProperty
-            Get
-                Return _RadiusProperty
-            End Get
-        End Property
-
-        Private _lineWidthProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transition)
-                                                                        LineWidth = CInt(Transition.Value)
-                                                                    End Sub)
-        Public ReadOnly Property LineWidthProperty As TransitionProperty
-            Get
-                Return _lineWidthProperty
-            End Get
-        End Property
+        Public ReadOnly LineWidthProperty As New TransitionProperty(AddressOf OnLineWidthPropertyUpdated)
+        Private Sub OnLineWidthPropertyUpdated(ByRef Sender As Object, ByRef Value As Object)
+            LineWidth = CInt(Value)
+        End Sub
 
 #End Region
 

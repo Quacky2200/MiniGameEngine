@@ -20,7 +20,7 @@ Partial Public MustInherit Class Scene
 
     Public Sub RefreshZIndexes()
         SyncLock GameObjects
-            GameObjects.Sort(Function(T1, T2) T1.zIndex - T2.zIndex)
+            GameObjects.Sort(Function(T1, T2) T1.ZIndex - T2.ZIndex)
         End SyncLock
     End Sub
 
@@ -120,6 +120,7 @@ Partial Public MustInherit Class Scene
         For Each Obj As GameObject In GameObjects
             If Not (Not IsNothing(Obj) AndAlso Obj.Visible) Then Continue For
             Obj.Update(delta)
+            Obj.UpdateComponents(delta)
         Next
     End Sub
 

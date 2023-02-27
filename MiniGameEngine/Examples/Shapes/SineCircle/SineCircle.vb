@@ -18,23 +18,15 @@ Namespace Examples.Shapes
         End Sub
 
 #Region "Transition Properties"
-        Private _FrequencyProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transition)
-                                                                        Me.frequency = CInt(Transition.Value)
-                                                                    End Sub)
-        Public ReadOnly Property FrequencyProperty As TransitionProperty
-            Get
-                Return _FrequencyProperty
-            End Get
-        End Property
+        Public ReadOnly FrequencyProperty As New TransitionProperty(AddressOf OnFrequencyPropertyUpdated)
+        Private Sub OnFrequencyPropertyUpdated(ByRef Sender As Object, ByRef Value As Object)
+            Me.frequency = CInt(Value)
+        End Sub
 
-        Private _DepthProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transition)
-                                                                    Me.depth = CInt(Transition.Value)
-                                                                End Sub)
-        Public ReadOnly Property DepthProperty As TransitionProperty
-            Get
-                Return _DepthProperty
-            End Get
-        End Property
+        Public ReadOnly DepthProperty As New TransitionProperty(AddressOf OnDepthPropertyUpdated)
+        Private Sub OnDepthPropertyUpdated(ByRef Sender As Object, ByRef Value As Object)
+            Me.depth = CInt(Value)
+        End Sub
 
 #End Region
 

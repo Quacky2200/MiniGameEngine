@@ -13,44 +13,29 @@ Namespace UI
         Public Property BorderWidth As Integer = 0
 
 #Region "Transition Properties"
-        Private _ColorProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.ColorTransition)
-                                                                    Me.Color = Transition.Value
-                                                                End Sub)
-        Public ReadOnly Property ColorProperty As TransitionProperty
-            Get
-                Return _ColorProperty
-            End Get
-        End Property
+        Public ReadOnly ColorProperty As New TransitionProperty(AddressOf OnColorPropertyUpdated)
+        Private Sub OnColorPropertyUpdated(ByRef Sender As Object, ByRef Value As Color)
+            Me.Color = Value
+        End Sub
 
-        Private _BackgroundProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.ColorTransition)
-                                                                         Me.Background = Transition.Value
-                                                                     End Sub)
-        Public ReadOnly Property BackgroundProperty As TransitionProperty
-            Get
-                Return _BackgroundProperty
-            End Get
-        End Property
+        Public ReadOnly BackgroundProperty As New TransitionProperty(AddressOf OnBackgroundPropertyUpdated)
+        Private Sub OnBackgroundPropertyUpdated(ByRef Sender As Object, ByRef Value As Color)
+            Me.Background = Value
+        End Sub
 
-        Private _BorderColorProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.ColorTransition)
-                                                                          Me.BorderColor = Transition.Value
-                                                                      End Sub)
-        Public ReadOnly Property BorderColorProperty As TransitionProperty
-            Get
-                Return _BorderColorProperty
-            End Get
-        End Property
-        Private _BorderWidthProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.DoubleTransition)
-                                                                          Me.BorderWidth = Transition.Value
-                                                                      End Sub)
-        Public ReadOnly Property BorderWidthProperty As TransitionProperty
-            Get
-                Return _BorderWidthProperty
-            End Get
-        End Property
+        Public ReadOnly BorderColorProperty As New TransitionProperty(AddressOf OnBorderColorPropertyUpdated)
+        Private Sub OnBorderColorPropertyUpdated(ByRef Sender As Object, ByRef Value As Color)
+            Me.BorderColor = Value
+        End Sub
+
+        Public ReadOnly BorderWidthProperty As New TransitionProperty(AddressOf OnBorderWidthPropertyUpdated)
+        Private Sub OnBorderWidthPropertyUpdated(ByRef Sender As Object, ByRef Value As Integer)
+            Me.BorderWidth = Value
+        End Sub
 
 #End Region
 
-        Public Sub New(Text As String)
+        Public Sub New(Optional Text As String = "")
             Me.Text = Text
         End Sub
         Public Overrides Sub Render(Graphics As Graphics)

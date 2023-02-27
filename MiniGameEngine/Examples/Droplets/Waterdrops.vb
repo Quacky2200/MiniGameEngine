@@ -9,7 +9,7 @@ Namespace Examples.Droplets
         End Sub
         Friend Overloads Overrides Sub Spawn(ByVal i As Integer, ByRef CurrentCircle As Shapes.Circle)
             Dim CircleDissapation As New Transitions.ColorTransition(DropletColor, DropletFadeColor) With {.Enabled = True}
-            Dim CircleMovement As New DoubleTransition(0, 0, DropletRadius, MovementDuration, True)
+            Dim CircleMovement As New DoubleTransition(0, DropletRadius, MovementDuration, True)
             Dim Circle As Shapes.Circle = CurrentCircle
             Circle.AddTransition(Circle.RadiusProperty, CircleMovement, True)
             Circle.AddTransition(Circle.ColorProperty, CircleDissapation, True, True)

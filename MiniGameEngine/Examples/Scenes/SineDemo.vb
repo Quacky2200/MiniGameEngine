@@ -38,18 +38,10 @@ Namespace Examples.Scenes
             .HorizontalAlignment = UI.HorizontalAlignment.Center,
             .VerticalAlignment = UI.VerticalAlignment.Center,
             .Visible = False,
-            .zIndex = 99
+            .ZIndex = 99
         }
 
         'Transitions
-        Private DebugTextColorTransition As New ColorTransition(Color.Red, Color.Blue) With {
-            .Duration = TimeSpan.FromSeconds(5),
-            .Repeat = True,
-            .Reverse = True,
-            .ReverseUsesDuration = True,
-            .Enabled = True
-        }
-
         Private PausedTextColorTransition As New ColorTransition(Color.Black, Color.White) With {
             .Repeat = True,
             .Reverse = True,
@@ -63,11 +55,17 @@ Namespace Examples.Scenes
 
         Public Depth As New RandomDoubleTransition(25, 0, 80) With {.Repeat = True, .Reverse = True, .Enabled = True}
 
-        Public Position As New RandomPointTransition(Game.MIDDLE_POS, MinTransitionalPosition(), MaxTransitionalPosition()) With {.Repeat = True, .Reverse = True, .Enabled = True}
+        Public Position As New RandomPointTransition(Game.MIDDLE_POS, MinTransitionalPosition(), MaxTransitionalPosition()) With {.Repeat = True, .Enabled = True}
 
         Public Rotation As New RandomDoubleTransition(0, 360) With {.Repeat = True, .Reverse = True, .ReverseUsesDuration = True, .Enabled = True}
 
-        Public SineColorTransition As New ColorTransition(Color.Red, Color.LimeGreen) With {.Duration = TimeSpan.FromSeconds(5), .Repeat = True, .Reverse = True, .Enabled = True}
+        Public ColorTransition As New RandomColorTransition(0, COLOR_TRANSITION_HSL_SATURATION_LIGHT, COLOR_TRANSITION_HSL_LIGHTNESS_LIGHT) With
+                                                           {.Duration = TimeSpan.FromSeconds(5), .Repeat = True, .Reverse = True, .Enabled = True}
+
+        Public Const COLOR_TRANSITION_HSL_SATURATION_LIGHT = 1
+        Public Const COLOR_TRANSITION_HSL_SATURATION_DARK = 1.0
+        Public Const COLOR_TRANSITION_HSL_LIGHTNESS_LIGHT = 0.3
+        Public Const COLOR_TRANSITION_HSL_LIGHTNESS_DARK = 0.5
 #End Region
 
 #Region "Sine Circle Types"
@@ -83,7 +81,7 @@ Namespace Examples.Scenes
             Radius.Duration = TimeSpan.FromSeconds(10)
             Frequency.Duration = TimeSpan.FromSeconds(10)
             Depth.Duration = TimeSpan.FromSeconds(10)
-            Rotation.Duration = TimeSpan.FromSeconds(3)
+            Rotation.Duration = TimeSpan.FromSeconds(6)
             Position.Duration = TimeSpan.FromSeconds(4)
         End Sub
 
@@ -92,16 +90,11 @@ Namespace Examples.Scenes
             Frequency.Duration = TimeSpan.FromSeconds(1)
             Depth.Duration = TimeSpan.FromSeconds(2)
             Position.Duration = TimeSpan.FromMilliseconds(800)
-            Rotation.Duration = TimeSpan.FromSeconds(1)
+            Rotation.Duration = TimeSpan.FromSeconds(3)
         End Sub
 
         Public Sub AdvanceSineType()
             CurrentCircle = (CurrentCircle + 1) Mod Circles.Count
-            'Dim dip As Integer = currentSineType
-            'While dip = currentSineType
-            '    dip = random.Next(0, circletypes.Count)
-            'End While
-            'currentSineType = dip
             Dim key = Circles.Keys.ToArray(CurrentCircle)
             Sine.type = key
             Circles(key)()
@@ -134,30 +127,38 @@ Namespace Examples.Scenes
         End Sub
 
         Public Overrides Sub Init()
-            Game.FPSRefreshRate = TimeSpan.FromSeconds(0.25)
-            Game.MustSmooth = True
+            AddHandler Game.Window.SizeChanged, AddressOf Resized
+            Game.FPSRefreshRate = TimeSpan.FromSeconds(0)
 
             'Add the sine circle
             AddGameObject(Sine)
             'Get the first Sine Type and change it
             AdvanceSineType()
 
-            'add all of the Sine Circle Transitions
+            Rotation.EasingFunction = AddressOf EasingFunctions.EaseIn
+            Position.EasingFunction = AddressOf EasingFunctions.EaseIn
+            ColorTransition.EasingFunction = AddressOf EasingFunctions.EaseInOut
+            Frequency.EasingFunction = AddressOf EasingFunctions.EaseIn
+            Depth.EasingFunction = AddressOf EasingFunctions.EaseIn
+            Radius.EasingFunction = AddressOf EasingFunctions.EaseIn
+
+
+            'Add all Sine Circle Transitions
             Sine.AddTransition(Sine.RotationProperty, Rotation)
             Sine.AddTransition(Sine.PositionProperty, Position)
-            Sine.AddTransition(Sine.ColorProperty, SineColorTransition)
+            Sine.AddTransition(Sine.ColorProperty, ColorTransition)
             Sine.AddTransition(Sine.FrequencyProperty, Frequency)
             Sine.AddTransition(Sine.DepthProperty, Depth)
             Sine.AddTransition(Sine.RadiusProperty, Radius)
 
-            'Add the debugging information text
+            'Add debugging information text
             AddGameObject(DebuggingInfomation)
-            'Add the debugging information transition
-            Sine.AddTransition(DebuggingInfomation.ColorProperty, DebugTextColorTransition)
-            'Add the fullscreen information text
+            'Add debugging information transition
+            Sine.AddTransition(DebuggingInfomation.ColorProperty, ColorTransition) ' DebugTextColorTransition)
+            'Add fullscreen information text
             AddGameObject(FullScreenInformation)
             'Add the same debugging transition to fullscreen text
-            FullScreenInformation.AddTransition(FullScreenInformation.ColorProperty, DebugTextColorTransition)
+            FullScreenInformation.AddTransition(FullScreenInformation.ColorProperty, ColorTransition) ' DebugTextColorTransition)
             'Add paused text
             AddGameObject(PausedInformation)
 
@@ -181,11 +182,11 @@ Namespace Examples.Scenes
             'Close the stream, now ready to be played
             AudioWriteStream.Close()
             'Play the music from temporary file 
-            'WMPObject.settings.autoStart = False
+            WMPObject.settings.autoStart = False
             WMPObject.URL = MP3Path
             WMPObject.settings.setMode("loop", True)
-            WMPObject.controls.play()
-            'Paused = True
+            'WMPObject.controls.play()
+            Paused = True
         End Sub
 #End Region
 
@@ -194,20 +195,25 @@ Namespace Examples.Scenes
             If MouseButton = MouseButtons.Right Then
                 'Toggle the background color on right mouse button click
                 BackgroundColor = If(BackgroundColor = Color.White, Color.Black, Color.White)
+                ColorTransition.HSL.L = If(BackgroundColor = Color.White, COLOR_TRANSITION_HSL_LIGHTNESS_LIGHT, COLOR_TRANSITION_HSL_LIGHTNESS_DARK)
+                ColorTransition.HSL.S = If(BackgroundColor = Color.White, COLOR_TRANSITION_HSL_SATURATION_LIGHT, COLOR_TRANSITION_HSL_SATURATION_DARK)
             ElseIf MouseButton = MouseButtons.Left Then
                 'Advance to the next sine type
                 AdvanceSineType()
             End If
         End Sub
 
+        Public Sub Resized()
+            Position.MaxPosition = MaxTransitionalPosition
+            Radius.MaxDouble = MaxTransitionalRadius
+            PausedInformation.Position = Game.MIDDLE_POS
+            FullScreenInformation.Position = New Point(Game.BOTTOM_MIDDLE_POS.X, Game.BOTTOM_MIDDLE_POS.Y - 100)
+        End Sub
+
         Public Overrides Sub KeyDown(KeyCode As Keys)
             'Change window fullscreen mode for double click on left mouse button
             If KeyCode = Keys.F11 Then
                 Game.Fullscreen = If(Game.Fullscreen, False, True)
-                Position.maxPosition = MaxTransitionalPosition
-                Radius.maxDouble = MaxTransitionalRadius
-                PausedInformation.Position = Game.MIDDLE_POS
-                FullScreenInformation.Position = New Point(Game.BOTTOM_MIDDLE_POS.X, Game.BOTTOM_MIDDLE_POS.Y - 100)
             End If
 
             If KeyCode = Keys.F5 Then
@@ -215,7 +221,6 @@ Namespace Examples.Scenes
             End If
 
             If KeyCode = Keys.Space Then
-                'Toggle pause on the left mouse button click
                 Paused = Not Paused
             End If
         End Sub
@@ -224,7 +229,7 @@ Namespace Examples.Scenes
 #Region "Game Update & Render"
         Private ReadOnly DebugText As New StatisticVariable(Of String)(AddressOf UpdateDebuggingText, TimeSpan.FromMilliseconds(50))
         Private Function UpdateDebuggingText() As String
-            Return $"Sine Generator [{Sine.GetStatistics()}]{Environment.NewLine}TextColor:{DebugTextColorTransition.lastValue}"
+            Return $"Sine Generator [{Sine.GetStatistics()}]{Environment.NewLine}TextColor:{ColorTransition.Value}"
         End Function
 
         Public Overrides Sub Update(delta As Double)

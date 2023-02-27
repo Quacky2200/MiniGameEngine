@@ -1,5 +1,4 @@
-﻿Imports MiniGameEngine.General.Time
-Imports MiniGameEngine.General.Threading
+﻿Imports MiniGameEngine.General.Threading
 Imports System.Drawing
 Imports System.Windows.Forms
 
@@ -103,12 +102,12 @@ Public Class GameContainer
     Private ReadOnly GameStatistics As New StatisticVariable(Of String)(AddressOf UpdateGameStatistics, TimeSpan.FromMilliseconds(100))
 
     Private Function UpdateGameStatistics() As String
-        Return $"FPS: {FPS.ToString("0.00")}, Update: {ThreadMs.ToString("0.00")}ms ({GameObjectStatistics.Value} GameObjects)"
+        Return $"FPS: {FPS.ToString("00")}, Update: {ThreadMs.ToString("0.00")}ms ({GameObjectStatistics.Value} GameObjects)"
     End Function
 
-    Public Property MustSmooth As Boolean = False
-    Public Property MustInterpolate As Boolean = False
-    Public Property MustAntiAliasText As Boolean = False
+    Public Property MustSmooth As Boolean = True
+    Public Property MustInterpolate As Boolean = True
+    Public Property MustAntiAliasText As Boolean = True
 
 
     ''' <summary>
@@ -220,8 +219,11 @@ Public Class GameContainer
     ''' </summary>
     ''' <param name="Scene"></param>
     ''' <remarks></remarks>
-    Public Sub AddScene(Scene As Scene)
+    Public Sub AddScene(Scene As Scene, Optional AutomaticallySwitch As Boolean = False)
         Scenes.Add(Scene)
+        If AutomaticallySwitch Then
+            SwitchScenes(Scene)
+        End If
     End Sub
     ''' <summary>
     ''' Add a list of scenes to the list
@@ -306,10 +308,54 @@ Public Class GameContainer
 #End Region
 
 #Region "Timing"
-    Private Property FrameTime As Long = Now.Ticks
-    Private Property UpdateTime As Long = Now.Ticks
+    Private _FrameTime As Long = Now.Ticks
+    Private _FrameCountTime As Long = Now.Ticks
+    Private _Frames As Long = 0
+    Private _FPS As Integer = 0
+    Private Property FrameTime As Long
+        Get
+            Return _FrameTime
+        End Get
+        Set(value As Long)
+            _FrameTime = value
+            _Frames += 1
+            If TimeSpan.FromTicks(value - _FrameCountTime).TotalMilliseconds >= 1000 Then
+                _FPS = _Frames
+                _Frames = 0
+                _FrameCountTime = value
+            End If
+        End Set
+    End Property
 
-    Private ReadOnly Property FrameDifference As Double
+    Private _UpdateTime As Long = Now.Ticks
+    Private Const UPDATE_TIME_SMOOTH_COUNT = 3
+    Private _UpdateTimeAvgs(UPDATE_TIME_SMOOTH_COUNT) As Long
+    Private _UpdateTimeAvgsIdx As Integer = 0
+    Public Property UpdateTime As Long
+        Get
+            SyncLock _UpdateTimeAvgs
+                Dim Avg As Long = 0
+                For Idx = 0 To UPDATE_TIME_SMOOTH_COUNT - 1
+                    Avg += _UpdateTimeAvgs(Idx)
+                Next
+                Avg = If(Avg = 0, 0, Clamp((Avg / UPDATE_TIME_SMOOTH_COUNT) / TimeSpan.TicksPerMillisecond, 0, Long.MaxValue))
+                Return Avg
+            End SyncLock
+
+            'Return _UpdateTime
+        End Get
+        Set(value As Long)
+            SyncLock _UpdateTimeAvgs
+                Dim Diff = value - _UpdateTime ' Diff between last
+                _UpdateTime = value
+                _UpdateTimeAvgs(_UpdateTimeAvgsIdx) = Diff
+                _UpdateTimeAvgsIdx = (_UpdateTimeAvgsIdx + 1) Mod UPDATE_TIME_SMOOTH_COUNT
+            End SyncLock
+        End Set
+    End Property
+
+
+    Private ReadOnly Property FrameDifference As Long
         Get
             Return Now.Ticks - FrameTime
         End Get
@@ -317,18 +363,18 @@ Public Class GameContainer
 
     Private ReadOnly Property FrameDelta As Double
         Get
-            Return Math.Max(0, FrameDifference / TimeSpan.TicksPerMillisecond)
+            Return Math.Max(0, Math.Round(FrameDifference / TimeSpan.TicksPerMillisecond, 1))
         End Get
     End Property
 
-    Private ReadOnly FPSStatistic As New StatisticVariable(Of Double)(Function() 1.0 / (FrameDifference / TimeSpan.TicksPerSecond), TimeSpan.FromMilliseconds(100))
+    Private ReadOnly FPSStatistic As New StatisticVariable(Of Double)(Function() _FPS, TimeSpan.FromMilliseconds(500))
     Public ReadOnly Property FPS As Double
         Get
             Return FPSStatistic.Value
         End Get
     End Property
 
-    Private ReadOnly ThreadMsStatistic As New StatisticVariable(Of Double)(Function() Math.Max(0, (Now.Ticks - UpdateTime) / TimeSpan.TicksPerMillisecond), TimeSpan.FromMilliseconds(100))
+    Private ReadOnly ThreadMsStatistic As New StatisticVariable(Of Double)(Function() Math.Max(0, UpdateTime), TimeSpan.FromMilliseconds(100))
     Public ReadOnly Property ThreadMs As Double
         Get
             Return ThreadMsStatistic.Value
@@ -445,6 +491,11 @@ Public Class GameContainer
             End If
         End Set
     End Property
+
+    Public Sub ToggleFullscreen()
+        ' Nicer than constantly doing the following, every time... Sigh.
+        Fullscreen = Not Fullscreen
+    End Sub
 
 #End Region
 

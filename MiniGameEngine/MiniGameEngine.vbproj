@@ -80,23 +80,29 @@
     <Compile Include="Examples\Shapes\SineCircle\PiSineType.vb" />
     <Compile Include="Examples\Shapes\SineCircle\SineCircle.vb" />
     <Compile Include="Examples\Shapes\SineCircle\SineCircleType.vb" />
+    <Compile Include="Gaming\Component.vb" />
     <Compile Include="Gaming\General\Color\ColorTools.vb" />
     <Compile Include="Gaming\General\Color\RandomColor.vb" />
     <Compile Include="Gaming\General\Color\RGBHSL.vb" />
     <Compile Include="Gaming\General\Color\SimilarColor.vb" />
     <Compile Include="Examples\Scenes\SineDemo.vb" />
+    <Compile Include="Gaming\General\IDObject.vb" />
     <Compile Include="Gaming\General\LinkedList.vb" />
     <Compile Include="Gaming\General\ModifiableList.vb" />
+    <Compile Include="Gaming\General\Observers\Observable.vb" />
+    <Compile Include="Gaming\General\Observers\Subscriber.vb" />
+    <Compile Include="Gaming\General\StatisticVariableAvg.vb" />
     <Compile Include="Gaming\General\StatisticVariable.vb" />
     <Compile Include="Gaming\General\Threading\ThreadWork.vb" />
     <Compile Include="Gaming\GameContainer.vb" />
     <Compile Include="Gaming\GameObject.vb" />
+    <Compile Include="Gaming\General\Utils.vb" />
     <Compile Include="Gaming\Generics\GenericComparer.vb" />
     <Compile Include="Gaming\Reflection\CachedCall.vb" />
     <Compile Include="Gaming\Reflection\CachedCallSpawner.vb" />
     <Compile Include="Gaming\Reflection\CachedReflector.vb" />
     <Compile Include="Gaming\Sprite.vb" />
-    <Compile Include="Gaming\Transitions\TransitionPropertyItem.vb" />
+    <Compile Include="Gaming\Transitions\EasingFunctions.vb" />
     <Compile Include="Gaming\UI\LazyText.vb" />
     <Compile Include="Gaming\UI\TextEditElement.vb" />
     <Compile Include="Gaming\UI\TextElement.vb" />
@@ -104,7 +110,6 @@
     <Compile Include="Gaming\Scenes\EmptyScene.vb" />
     <Compile Include="Gaming\Scenes\Scene.vb" />
     <Compile Include="Gaming\General\Threading\ThreadLoop.vb" />
-    <Compile Include="Gaming\General\Time\Watch.vb" />
     <Compile Include="Gaming\Transitions\Color\ColorTransition.vb" />
     <Compile Include="Gaming\Transitions\Color\RandomColorTransition.vb" />
     <Compile Include="Gaming\Transitions\Double\DoubleTransition.vb" />
@@ -114,7 +119,6 @@
     <Compile Include="Gaming\Transitions\Transition.vb" />
     <Compile Include="Gaming\Transitions\TransitionDirection.vb" />
     <Compile Include="Gaming\Transitions\TransitionProperty.vb" />
-    <Compile Include="Gaming\Transitions\TransitionWorkElement.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

@@ -7,7 +7,7 @@ Namespace Examples.Droplets
         End Sub
 
         Friend Overloads Overrides Sub Spawn(ByVal i As Integer, ByRef CurrentCircle As Shapes.Circle)
-            Dim CircleMovement As New DoubleTransition(0, 0, 100, MovementDuration, True)
+            Dim CircleMovement As New DoubleTransition(0, 100, MovementDuration, True)
             Dim Circle As Shapes.Circle = CurrentCircle
             Circle.AddTransition(Circle.RadiusProperty, CircleMovement, True, True)
             Threading.Thread.Sleep(100)

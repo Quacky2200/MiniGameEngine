@@ -12,52 +12,35 @@ Namespace Examples.Shapes
         ''' <remarks></remarks>
         Public Sub New(position As Point, radius As Double)
             Me.Position = position
-            Me.radius = radius
+            Me.Radius = radius
         End Sub
 
 #Region "Painting"
-        Public Property fillColor As Color = Color.Transparent
-        Public Property lineColor As Color = Color.Black
-        Public Property lineWidth As Integer = 1
+        Public Property FillColor As Color = Color.Transparent
+        Public Property LineColor As Color = Color.Black
+        Public Property LineWidth As Integer = 1
 #End Region
 
 #Region "Transition Properties"
-        Private _ColorProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.Transition)
-                                                                    Me.lineColor = CType(Transition.Value, Color)
-                                                                End Sub)
+        Public ReadOnly ColorProperty As New TransitionProperty(AddressOf OnColorPropertyUpdated)
+        Private Sub OnColorPropertyUpdated(ByRef Sender As Object, ByRef Value As Object)
+            Me.LineColor = CType(Value, Color)
+        End Sub
 
-        Public ReadOnly Property ColorProperty As TransitionProperty
-            Get
-                Return _ColorProperty
-            End Get
-        End Property
+        Public ReadOnly FillProperty As New TransitionProperty(AddressOf OnFillPropertyUpdated)
+        Private Sub OnFillPropertyUpdated(ByRef Sender As Object, ByRef Value As Object)
+            Me.FillColor = CType(Value, Color)
+        End Sub
 
-        Private _FillProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.Transition)
-                                                                   Me.fillColor = CType(Transition.Value, Color)
-                                                               End Sub)
-        Public ReadOnly Property FillProperty As TransitionProperty
-            Get
-                Return _FillProperty
-            End Get
-        End Property
+        Public ReadOnly RadiusProperty As New TransitionProperty(AddressOf OnRadiusPropertyUpdated)
+        Private Sub OnRadiusPropertyUpdated(ByRef Sender As Object, ByRef Value As Object)
+            Me.Radius = CDbl(Value)
+        End Sub
 
-        Private _RadiusProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.Transition)
-                                                                     Me.radius = CDbl(Transition.Value)
-                                                                 End Sub)
-        Public ReadOnly Property RadiusProperty As TransitionProperty
-            Get
-                Return _RadiusProperty
-            End Get
-        End Property
-
-        Private _lineWidthProperty As New TransitionProperty(Me.ID, Sub(ByRef Transition As Transitions.Transition)
-                                                                        Me.lineWidth = CInt(Transition.Value)
-                                                                    End Sub)
-        Public ReadOnly Property lineWidthProperty As TransitionProperty
-            Get
-                Return _lineWidthProperty
-            End Get
-        End Property
+        Public ReadOnly LineWidthProperty As New TransitionProperty(AddressOf OnlineWidthPropertyUpdated)
+        Private Sub OnlineWidthPropertyUpdated(ByRef Sender As Object, ByRef Value As Object)
+            Me.LineWidth = CInt(Value)
+        End Sub
 
 #End Region
 
@@ -69,7 +52,7 @@ Namespace Examples.Shapes
         ''' <remarks></remarks>
         Public ReadOnly Property circumference() As Double
             Get
-                Return Math.PI * diameter
+                Return Math.PI * Diameter
             End Get
         End Property
         ''' <summary>
@@ -78,24 +61,24 @@ Namespace Examples.Shapes
         ''' <value></value>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public ReadOnly Property area As Double
+        Public ReadOnly Property Area As Double
             Get
-                Return Math.PI * (radius * radius)
+                Return Math.PI * (Radius * Radius)
             End Get
         End Property
-        Public Property radius As Double
+        Public Property Radius As Double
         ''' <summary>
         ''' Get of set the diameter of the circle
         ''' </summary>
         ''' <value></value>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Property diameter As Double
+        Public Property Diameter As Double
             Get
-                Return radius * 2
+                Return Radius * 2
             End Get
             Set(diameter As Double)
-                Me.radius = diameter / 2
+                Me.Radius = diameter / 2
             End Set
         End Property
         ''' <summary>
@@ -103,10 +86,10 @@ Namespace Examples.Shapes
         ''' </summary>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Function getPath() As Drawing2D.GraphicsPath
+        Public Function GetPath() As Drawing2D.GraphicsPath
             Dim positions As New List(Of PointF)
             For i = 0 To 360 Step 360
-                positions.Add(getPoint(radius, getRadians(i), Me.Position))
+                positions.Add(GetPoint(Radius, GetRadians(i), Me.Position))
             Next
             Dim Path As New Drawing2D.GraphicsPath
             Path.AddCurve(positions.ToArray)
@@ -120,7 +103,7 @@ Namespace Examples.Shapes
         ''' <param name="origin"></param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Shared Function getPoint(radius As Double, radians As Double, origin As Point) As Point
+        Public Shared Function GetPoint(radius As Double, radians As Double, origin As Point) As Point
             Dim x As Double = (radius * Math.Cos(radians)) + origin.X
             Dim y As Double = (radius * Math.Sin(radians)) + origin.Y
             Return New Point(CInt(x), CInt(y))
@@ -131,7 +114,7 @@ Namespace Examples.Shapes
         ''' <param name="degrees"></param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Shared Function getRadians(degrees As Double) As Double
+        Public Shared Function GetRadians(degrees As Double) As Double
             Return degrees * (Math.PI / 180)
         End Function
         ''' <summary>
@@ -140,17 +123,17 @@ Namespace Examples.Shapes
         ''' <param name="radians"></param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Shared Function getDegrees(radians As Double) As Double
+        Public Shared Function GetDegrees(radians As Double) As Double
             Return radians * (180 / Math.PI)
         End Function
 
         Public Overrides Sub Render(Graphics As Graphics)
-            Graphics.DrawClosedCurve(New Pen(lineColor), Me.getPath().PathPoints)
-            Graphics.FillClosedCurve(New SolidBrush(fillColor), Me.getPath().PathPoints)
+            Graphics.DrawClosedCurve(New Pen(LineColor), Me.GetPath().PathPoints)
+            Graphics.FillClosedCurve(New SolidBrush(FillColor), Me.GetPath().PathPoints)
         End Sub
-        Public Function inBoundries(Point As Point) As Boolean
+        Public Function WithinBoundries(Point As Point) As Boolean
             Dim SquareDistance As Double = (Position.X - Point.X) ^ 2 + (Position.Y - Point.Y) ^ 2
-            Return SquareDistance <= (radius ^ 2)
+            Return SquareDistance <= (Radius ^ 2)
         End Function
         'Public Overrides Sub Update(delta As Double)
         '    MyBase.Update(delta)

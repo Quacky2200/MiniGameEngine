@@ -1,50 +1,39 @@
 ﻿Imports System.Drawing
+Imports MiniGameEngine.General.Color.RGBHSL
+
 Namespace Transitions
     Public Class RandomColorTransition
         Inherits ColorTransition
-        Public Sub New()
-            MyBase.New(Color.Red, Color.Blue)
-        End Sub
-        Private Sub Cycled(sender As Object) Handles MyBase.OnRepeat
-            Me.A = Me.B
-            Me.B = Color.AliceBlue
-        End Sub
-        Private Sub Reversed(oldDirection As TransitionDirection, newDirection As TransitionDirection) Handles Me.OnReverse
-            If Direction = TransitionDirection.Forward Then
-                Me.A = Color.AliceBlue
-            Else
-                Me.B = Color.AliceBlue
-            End If
 
+        Public ReadOnly HSL As New HSL()
+        Private ReadOnly Random As New Random()
+
+        Public Sub New(Optional StartHue As Double = 0, Optional Saturation As Double = 1.0, Optional Lightness As Double = 0.5)
+            MyBase.New()
+
+            HSL.H = Clamp(StartHue, 0, 1)
+            HSL.S = Clamp(Saturation, 0, 1)
+            HSL.L = Clamp(Lightness, 0, 1)
+
+            Randomise()
+
+            Me.StartValue = HSL_to_Color(HSL)
         End Sub
-        'Private Sub Reversed(sender As Object, d As TransitionDirection) Handles MyBase.OnReverse
-        '    If Direction = TransitionDirection.Forward Then
-        '        Me.A = Color.AliceBlue
-        '    Else
-        '        Me.B = Color.AliceBlue
-        '    End If
-        'End Sub
+
+        Private Sub Randomise()
+            Me.StartValue = If(Me.Reverse, Me.StartValue, Me.EndValue)
+
+            HSL.H = Random.NextDouble()
+
+            Me.EndValue = HSL_to_Color(HSL)
+        End Sub
+
+        Private Sub RandomColorTransition_OnRepeat(sender As Object) Handles Me.OnRepeat
+            Randomise()
+        End Sub
+
+        Private Sub RandomColorTransition_OnReverse(OldDirection As TransitionDirection, NewDirection As TransitionDirection) Handles Me.OnReverse
+            If (NewDirection = TransitionDirection.Forward) Then Randomise()
+        End Sub
     End Class
 End Namespace
-'Public Class HSLColorRange
-'    Public Property hueBasePosition As Double = 0
-'    Public Property hueRange As Double = 360
-
-'    Public Property saturationBasePosition As Double = 0
-'    Public Property saturationRange As Double = 100
-
-'    Public Property lightnessBasePosition As Double = 0
-'    Public Property lightnessRange As Integer = 100
-
-'    Public random As New Random
-
-'    Public Sub New()
-'    End Sub
-'    Public Sub New(hueBasePosition As Double, hueRange As Double, saturationBasePosition As Double, saturationRange As Double, lightnessBasePosition As Double, lightnessRange As Double)
-
-'    End Sub
-'    Public Function generate() As Color
-'        Dim hue As Double = Math.Abs(hueBasePosition + If(hueRange < 0, random.Next(CInt(hueRange), 0), random.Next(0, CInt(Math.Abs(hueRange))))) Mod 360
-'        Dim saturation As Double = random.Next()
-'    End Function
-'End Class

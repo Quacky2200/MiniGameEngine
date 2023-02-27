@@ -26,6 +26,15 @@ Public Class LinkedList(Of T)
         End SyncLock
     End Sub
 
+    Public Function Contains(Value As T) As Boolean
+        Dim Current = Begin
+        While (Not IsNothing(Current))
+            If (Value.Equals(Current.Value)) Then Return True
+        End While
+
+        Return False
+    End Function
+
     Public ReadOnly Property Count As Integer
         Get
             Dim _Count = 0
@@ -85,6 +94,8 @@ Public Class LinkedList(Of T)
     End Sub
 
     Public Sub [Each](Action As Action(Of T))
+        PerformAdditions(Begin)
+
         Dim CurrentNode As Node(Of T) = Begin
         Dim LastNode As Node(Of T) = Nothing
 

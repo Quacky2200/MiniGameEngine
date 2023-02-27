@@ -2,22 +2,23 @@
 Namespace Transitions
     Public Class PointTransition
         Inherits Transition
-        Public Sub New(A As Point, B As Point)
-            MyBase.New(A, B)
-        End Sub
-        Public Sub New(StartPosition As Point, A As Point, B As Point, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = True)
-            MyBase.New(StartPosition, A, B, Duration, Enabled)
+
+        Public Sub New(StartValue As Point, EndValue As Point)
+            MyBase.New(StartValue, EndValue)
         End Sub
 
-        Public Sub New(A As Point, B As Point, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = True)
-            MyBase.New(A, A, B, Duration, Enabled)
+        Public Sub New(StartValue As Point, EndValue As Point, Optional Duration As TimeSpan = Nothing, Optional Enabled As Boolean = True)
+            MyBase.New(StartValue, EndValue, Duration, Enabled)
         End Sub
-        Public Overrides Function ConvertFromRaw(rawValues() As Double) As Object
-            Return New Point(CInt(rawValues(0)), CInt(rawValues(1)))
-        End Function
 
-        Public Overrides Function ConvertToRaw(obj As Object) As Double()
-            Return {obj.X, obj.Y}
+        Protected Overrides Function GetValue(_StartValue As Object, _EndValue As Object, T As Double) As Object
+            Dim StartValue As Point = _StartValue
+            Dim EndValue As Point = _EndValue
+
+            Return New Point() With {
+                .X = Math.Round(EasingFunction(StartValue.X, EndValue.X, T)),
+                .Y = Math.Round(EasingFunction(StartValue.Y, EndValue.Y, T))
+            }
         End Function
     End Class
 End Namespace
